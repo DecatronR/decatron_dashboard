@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
+import { useRouter } from 'next/router';
 import {
   Avatar,
   Box,
@@ -34,6 +35,8 @@ export const UsersTable = (props) => {
     selected = []
   } = props;
 
+  const router = useRouter();
+
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
 
@@ -42,6 +45,10 @@ export const UsersTable = (props) => {
   };
 
   const users = useLiveQuery(() => CreateUserDB?.userDetails?.toArray());
+
+  const handleRowClick = (userId) => {
+    router.push(`/edit-user/${userId}`)
+  }
 
   return (
     <Card>
@@ -83,13 +90,14 @@ export const UsersTable = (props) => {
             <TableBody>
               {users?.map((user, index) => {
                 const isSelected = selected.includes(user.id);
-                // const createdAt = format(user.date, 'dd/MM/yyyy');
 
                 return (
                   <TableRow
                     hover
                     key={user.id}
                     selected={isSelected}
+                    onClick={() => handleRowClick(user.id)}
+                    style={{ cursor: 'pointer' }}
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
