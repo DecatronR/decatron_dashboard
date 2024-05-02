@@ -7,10 +7,9 @@ import { Box, Button, Link, Stack, TextField, Typography, Select, MenuItem } fro
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import { CreateUserDB } from 'src/components/database/create-user';
+import axios from 'axios';
 
 const CreateUserForm = () => {
-  const router = useRouter();
-  const auth = useAuth();
 
   const roleOptions = [
     { value: 'admin', label: 'Admin' },
@@ -62,14 +61,30 @@ const CreateUserForm = () => {
 
   console.log(formattedDate);
       console.log(`Create user form details: `, `Name: ${values.firstName} ${values.lastName}, Email: ${values.email}, Role: ${values.role}`);
+      const userData =  {
+        "name": `${values.firstName} ${values.lastName}`,
+        "email": values.email,
+        "phone": "553-481-3641",
+        "roleId": values.role,
+        "password": values.password,
+        "confirmpassword": values.confirmPassword
+      }
+      const config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'http://localhost:3000/auth/register',
+        headers: { },
+        data : userData
+      }
       try {
+        // const res = await axios(config);
+        // console.log("Succesfully created new user: ", res);
         await CreateUserDB.userDetails.add({
           name: `${values.firstName} ${values.lastName}`,
           email: values.email,
           role: values.role,
           date: formattedDate,
         });
-        console.log("User added to database succesfully")
       } catch (err) {
         console.log("There was an issue with adding user to database: ", err);
         helpers.setStatus({ success: false });
@@ -78,6 +93,7 @@ const CreateUserForm = () => {
       }
     }
   });
+
 
   
 
@@ -187,6 +203,17 @@ const CreateUserForm = () => {
                   onChange={formik.handleChange}
                   type="password"
                   value={formik.values.password}
+                /> 
+                 <TextField
+                  error={!!(formik.touched.confirmPassword && formik.errors.confirmPassword)}
+                  fullWidth
+                  helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  type="password"
+                  value={formik.values.confirmPassword}
                 /> 
               </Stack>
               {formik.errors.submit && (
