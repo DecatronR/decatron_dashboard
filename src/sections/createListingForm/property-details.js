@@ -16,7 +16,7 @@ import { Field } from 'formik';
 import { legalDocuments, numberOf } from 'src/components/database/create-listing';
 
 const PropertyDetails = (props) => {
-  const { formik } = props;
+  const { formik, handleNextBtn, handleBackBtn } = props;
 
   const handlePriceChange = (event) => {
     const { name, value } = event.target;
@@ -69,7 +69,7 @@ const PropertyDetails = (props) => {
                   value={formik.values.livingRooms}
                   displayEmpty
                 >
-                  <MenuItem disabled value="">
+                  <MenuItem value="">
                     Select Number of Living Rooms
                   </MenuItem>
                   {numberOf.map((option) => (
@@ -94,7 +94,7 @@ const PropertyDetails = (props) => {
                   value={formik.values.bedrooms}
                   displayEmpty
                 >
-                  <MenuItem disabled value="">
+                  <MenuItem value="">
                     Select Number of Bedrooms
                   </MenuItem>
                   {numberOf.map((option) => (
@@ -119,8 +119,8 @@ const PropertyDetails = (props) => {
                   value={formik.values.kitchens}
                   displayEmpty
                 >
-                  <MenuItem disabled value="">
-                    Select Number of Parking Spaces
+                  <MenuItem value="">
+                    Select Number of Kitchens
                   </MenuItem>
                   {numberOf.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -144,8 +144,8 @@ const PropertyDetails = (props) => {
                   value={formik.values.parkingSpaces}
                   displayEmpty
                 >
-                  <MenuItem disabled value="">
-                    Select Number of Kitchens
+                  <MenuItem value="">
+                    Select Number of Packing Spaces
                   </MenuItem>
                   {numberOf.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -201,12 +201,6 @@ const PropertyDetails = (props) => {
           </Box>
         </CardContent>
         <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">Back</Button>
-          <Button type="submit" variant="contained">
-            Save and Continue
-          </Button>
-        </CardActions>
       </Card>
     </form>
   );

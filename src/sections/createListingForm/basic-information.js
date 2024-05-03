@@ -15,7 +15,7 @@ import {
 import { propertyListingTypes, propertyUsageTypes, propertyTypes, propertySubTypes, propertyCondtions, states, neighbourhoods } from 'src/components/database/create-listing';
 
 const BasicInformation = (props) => {
-  const { formik } = props;
+  const { formik, handleNextBtn, handleBackBtn } = props;
 
   return (
     <form
@@ -140,7 +140,7 @@ const BasicInformation = (props) => {
                   value={formik.values.propertySubType}
                   displayEmpty
                   >
-                    <MenuItem disabled value="">
+                    <MenuItem value="">
                       Select Property Sub Type
                     </MenuItem>
                   {propertySubTypes.map((option) => (
@@ -165,7 +165,7 @@ const BasicInformation = (props) => {
                   value={formik.values.propertyCondition}
                   displayEmpty
                   >
-                    <MenuItem disabled value="">
+                    <MenuItem value="">
                       Select Property Condition
                     </MenuItem>
                   {propertyCondtions.map((option) => (
@@ -245,14 +245,6 @@ const BasicInformation = (props) => {
           </Box>
         </CardContent>
         <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button variant="contained">
-            Back
-          </Button>
-          <Button variant="contained">
-             Save and Continue
-          </Button>
-        </CardActions>
       </Card>
     </form>
   );

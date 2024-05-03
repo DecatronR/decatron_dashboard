@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 const PropertyMedia = (props) => {
-  const { formik } = props;
+  const { formik, handleNextBtn, handleBackBtn } = props;
 
   const handlePriceChange = (event) => {
     const { name, value } = event.target;
@@ -53,7 +53,7 @@ const PropertyMedia = (props) => {
                   onChange={formik.handleChange}
                   type="file"
                   inputProps={{ multiple: true }}
-                  style={{ cursor: 'pointer' }} 
+                  style={{ cursor: 'pointer' }}
                 /> 
               </Grid>
               <Grid
@@ -94,14 +94,6 @@ const PropertyMedia = (props) => {
           </Box>
         </CardContent>
         <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">
-            Back
-          </Button>
-          <Button variant="contained">
-            Save and Continue
-          </Button>
-        </CardActions>
       </Card>
     </form>
   );
