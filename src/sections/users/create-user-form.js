@@ -77,14 +77,14 @@ const CreateUserForm = () => {
         data : userData
       }
       try {
-        // const res = await axios(config);
-        // console.log("Succesfully created new user: ", res);
-        await CreateUserDB.userDetails.add({
-          name: `${values.firstName} ${values.lastName}`,
-          email: values.email,
-          role: values.role,
-          date: formattedDate,
-        });
+        const res = await axios(config);
+        console.log("Succesfully created new user: ", res);
+        // await CreateUserDB.userDetails.add({
+        //   name: `${values.firstName} ${values.lastName}`,
+        //   email: values.email,
+        //   role: values.role,
+        //   date: formattedDate,
+        // });
       } catch (err) {
         console.log("There was an issue with adding user to database: ", err);
         helpers.setStatus({ success: false });
