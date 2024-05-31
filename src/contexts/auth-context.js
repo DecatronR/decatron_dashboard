@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
+import { createContext, useContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -19,18 +20,15 @@ const handlers = {
 
     return {
       ...state,
-      ...(
-        // if payload (user) is provided, then is authenticated
-        user
-          ? ({
+      ...(user
+        ? {
             isAuthenticated: true,
             isLoading: false,
             user
-          })
-          : ({
+          }
+        : {
             isLoading: false
           })
-      )
     };
   },
   [HANDLERS.SIGN_IN]: (state, action) => {
@@ -42,132 +40,92 @@ const handlers = {
       user
     };
   },
-  [HANDLERS.SIGN_OUT]: (state) => {
-    return {
-      ...state,
-      isAuthenticated: false,
-      user: null
-    };
-  }
+  [HANDLERS.SIGN_OUT]: (state) => ({
+    ...state,
+    isAuthenticated: false,
+    user: null
+  })
 };
 
-const reducer = (state, action) => (
-  handlers[action.type] ? handlers[action.type](state, action) : state
-);
-
-// The role of this context is to propagate authentication state through the App tree.
+const reducer = (state, action) => (handlers[action.type] ? handlers[action.type](state, action) : state);
 
 export const AuthContext = createContext({ undefined });
 
 export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
-  const initialized = useRef(false);
 
-  const initialize = async () => {
-    // Prevent from calling twice in development mode with React.StrictMode enabled
-    if (initialized.current) {
-      return;
-    }
-
-    initialized.current = true;
-
-    let isAuthenticated = false;
-
-    try {
-      isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
-    } catch (err) {
-      console.error(err);
-    }
-
-    if (isAuthenticated) {
-      const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-anika-visser.png',
-        name: 'Anika Visser',
-        email: 'anika.visser@devias.io'
-      };
-
-      dispatch({
-        type: HANDLERS.INITIALIZE,
-        payload: user
-      });
-    } else {
-      dispatch({
-        type: HANDLERS.INITIALIZE
-      });
-    }
-  };
-
-  useEffect(
-    () => {
-      initialize();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
-  const skip = () => {
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
-
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
+  useEffect(() => {
+    const initialize = async () => {
+      const userId = localStorage.getItem('userId'); // Retrieve userId from local storage
+      if (userId) {
+        try {
+          // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as paramter
+          const response = await axios.post('http://localhost:8080/users/editUsers', { id: userId }, { withCredentials: true });
+          const user = response.data;
+          dispatch({
+            type: HANDLERS.INITIALIZE,
+            payload: user
+          });
+        } catch (error) {
+          console.error(error);
+          dispatch({
+            type: HANDLERS.INITIALIZE
+          });
+        }
+      } else {
+        dispatch({
+          type: HANDLERS.INITIALIZE
+        });
+      }
     };
 
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
-  };
+    initialize();
+  }, []);
 
   const signIn = async (email, password) => {
-    if (email !== 'demo@decatron.io' || password !== 'Password123!') {
-      throw new Error('Please check your email and password');
-    }
-
     try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
+      const res = await axios.post('http://localhost:8080/auth/login', { email, password }, { withCredentials: true });
+      const userId = res.data.user;
+      
+      if (!userId) {
+        console.log("Could not get userId");
+        return;
+      }
+
+      localStorage.setItem('userId', userId); // we store userId in local storage
+      // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as paramter
+      const response = await axios.post('http://localhost:8080/users/editUsers', { id: userId }, { withCredentials: true });
+      console.log("User: ", response.data.data);
+      const user = response.data.data;
+
+      dispatch({
+        type: HANDLERS.SIGN_IN,
+        payload: user
+      });
+    } catch (error) {
+      console.error("Error during sign-in:", error);
     }
-
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
   };
 
-  const signUp = async (email, name, password) => {
-    throw new Error('Sign up is not implemented');
-  };
+  const signOut = async () => {
+    try {
+      await axios.get('http://localhost:8080/auth/logout', {}, { withCredentials: true });
+      localStorage.removeItem('userId'); // we remove userId from local storage
 
-  const signOut = () => {
-    dispatch({
-      type: HANDLERS.SIGN_OUT
-    });
+      dispatch({
+        type: HANDLERS.SIGN_OUT
+      });
+    } catch (error) {
+      console.error("Error during sign-out:", error);
+    }
   };
 
   return (
     <AuthContext.Provider
       value={{
         ...state,
-        skip,
         signIn,
-        signUp,
         signOut
       }}
     >

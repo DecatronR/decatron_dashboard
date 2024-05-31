@@ -61,24 +61,28 @@ const CreateUserForm = () => {
 
   console.log(formattedDate);
       console.log(`Create user form details: `, `Name: ${values.firstName} ${values.lastName}, Email: ${values.email}, Role: ${values.role}`);
+
       const userData =  {
-        "name": `${values.firstName} ${values.lastName}`,
-        "email": values.email,
-        "phone": "553-481-3641",
-        "roleId": values.role,
-        "password": values.password,
-        "confirmpassword": values.confirmPassword
+        name: `${values.firstName} ${values.lastName}`,
+        email: values.email,
+        phone: "553-481-3641",
+        role: values.role,
+        password: values.password,
+        confirmpassword: values.confirmPassword
       }
-      const config = {
+      const createUserconfig = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://localhost:3000/auth/register',
+        url: 'http://localhost:8080/auth/register',
         headers: { },
-        data : userData
+        data: userData,
       }
       try {
-        const res = await axios(config);
+        const res = await axios(createUserconfig);
         console.log("Succesfully created new user: ", res);
+        if(res.statusText === "OK") {
+          helpers.setStatus({ success: true });
+        }
         // await CreateUserDB.userDetails.add({
         //   name: `${values.firstName} ${values.lastName}`,
         //   email: values.email,
@@ -91,8 +95,24 @@ const CreateUserForm = () => {
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
       }
+
+      const fetchUserConfig = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: 'http://localhost:8080/users/getusers',
+        headers: { }
+      }
+
+      try {
+        const res = await axios(fetchUserConfig)
+        console.log("Succesfully fethced user data: ", res);
+      } catch(err) {
+        console.log("There was an issue fetching user data: ", err);
+      }
     }
   });
+
+  
 
 
   
