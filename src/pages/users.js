@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { subDays, subHours } from 'date-fns';
 import axios from 'axios';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
@@ -33,10 +34,11 @@ const useUsersIds = (users) => {
 };
 
 const Page = () => {
-  const [usersData, setUsersData] = useState([]); // State for user data
+  const router = useRouter();
+  const [usersData, setUsersData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const users = useUsers(usersData, page, rowsPerPage); // Use fetched data
+  const users = useUsers(usersData, page, rowsPerPage);
   const usersIds = useUsersIds(users);
   const usersSelection = useSelection(usersIds);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -80,11 +82,7 @@ const Page = () => {
   }
 
   const handleEditUser = async (userId) => {
-    if (onEditUser) {
-      onEditUser(userId);
-    } else {
-      router.push(`/edit-user/${userId}`);
-    }
+    router.push(`/edit-user/${userId}`);
   };
 
   const handleDeleteUser = async (userId) => {

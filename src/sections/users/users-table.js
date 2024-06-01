@@ -57,6 +57,12 @@ export const UsersTable = (props) => {
       onDeleteUser(userId)
     }
   }
+
+  const handleEditClick = (userId) => {
+    if(onEditUser) {
+      onEditUser(userId);
+    }
+  }
   
   return (
     <Card>
@@ -150,11 +156,13 @@ export const UsersTable = (props) => {
                       {formatDate(user.createdAt)}
                     </TableCell>
                     <TableCell>
+                      {/* the user id is initialized with an underscore exactly this way at the backend */}
                       <IconButton onClick={() => handleEditClick(user._id)}>
                         <SvgIcon fontSize="small">
                           <PencilIcon />
                         </SvgIcon>
                       </IconButton>
+                      {/* the user id is initialized with an underscore exactly this way at the backend */}
                       <IconButton onClick={() => handleDeleteClick(user._id)}>
                         <SvgIcon fontSize="small">
                           <TrashIcon />
