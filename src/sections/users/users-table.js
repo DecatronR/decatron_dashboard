@@ -48,23 +48,15 @@ export const UsersTable = (props) => {
     return page * rowsPerPage + index + 1;
   };
 
-  const handleEditClick = (userId) => {
-    if (onEditUser) {
-      onEditUser(userId);
-    } else {
-      router.push(`/edit-user/${userId}`);
-    }
-  };
-
-  const handleDeleteClick = (userId) => {
-    if (onDeleteUser) {
-      onDeleteUser(userId);
-    }
-  };
-
   const formatDate = (timestamp) => {
     return new Date(timestamp).toISOString().split('T')[0];
   };
+
+  const handleDeleteClick = (userId) => {
+    if(onDeleteUser) {
+      onDeleteUser(userId)
+    }
+  }
   
   return (
     <Card>
@@ -151,18 +143,19 @@ export const UsersTable = (props) => {
                       {user.email}
                     </TableCell>
                     <TableCell>
-                      {user.role}
+                      {/* the user id is initialized with an underscore exactly this way at the backend */}
+                      {user._id}
                     </TableCell>
                     <TableCell>
                       {formatDate(user.createdAt)}
                     </TableCell>
                     <TableCell>
-                      <IconButton onClick={() => handleEditClick(user.id)}>
+                      <IconButton onClick={() => handleEditClick(user._id)}>
                         <SvgIcon fontSize="small">
                           <PencilIcon />
                         </SvgIcon>
                       </IconButton>
-                      <IconButton onClick={() => handleDeleteClick(user.id)}>
+                      <IconButton onClick={() => handleDeleteClick(user._id)}>
                         <SvgIcon fontSize="small">
                           <TrashIcon />
                         </SvgIcon>

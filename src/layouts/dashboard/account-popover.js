@@ -9,14 +9,17 @@ export const AccountPopover = (props) => {
   const router = useRouter();
   const auth = useAuth();
 
-  const handleSignOut = useCallback(
-    () => {
+  const handleSignOut = useCallback(() => {
       onClose?.();
       auth.signOut();
       router.push('/auth/login');
-    },
-    [onClose, auth, router]
+    },[onClose, auth, router]
   );
+
+  const handleSignIn = useCallback(() => {
+      onClose?.();
+      router.push('/auth/login');
+  },[onClose, router]);
 
   return (
     <Popover
@@ -42,7 +45,7 @@ export const AccountPopover = (props) => {
           color="text.secondary"
           variant="body2"
         >
-          {auth.user ? auth.user.name : Anonymous}
+          {auth.user ? auth.user.name : "You're not signed in"}
         </Typography>
       </Box>
       <Divider />
@@ -56,9 +59,16 @@ export const AccountPopover = (props) => {
           }
         }}
       >
-        <MenuItem onClick={handleSignOut}>
+        { auth.user ?  (
+          <MenuItem onClick={handleSignOut}>
           Sign out
-        </MenuItem>
+        </MenuItem> 
+        ) : (
+          <MenuItem onClick={handleSignIn}>
+          Sign in
+          </MenuItem>
+        )}
+       
       </MenuList>
     </Popover>
   );

@@ -62,6 +62,7 @@ const Page = () => {
   const fetchUsers = async () => {
     try {
       const response = await axios.get('http://localhost:8080/users/getusers', { withCredentials: true });
+      console.log("User data: ",response.data);
       setUsersData(response.data);
     } catch (err) {
       console.error("Error fetching users: ", err);
@@ -77,6 +78,25 @@ const Page = () => {
     fetchUsers();
     setIsFormOpen(false);
   }
+
+  const handleEditUser = async (userId) => {
+    if (onEditUser) {
+      onEditUser(userId);
+    } else {
+      router.push(`/edit-user/${userId}`);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      console.log("User Id ready: ", userId);
+      const res = await axios.post('http://localhost:8080/users/delete', { id: userId }, { withCredentials: true });
+      console.log("Delete users: ", res);
+      fetchUsers();
+    } catch(err) {
+      console.error("Error deleting users: ", err);
+    }
+  };
 
 
   return (
@@ -134,6 +154,8 @@ const Page = () => {
             <UsersTable
               count={usersData.length}
               items={users}
+              onEditUser={handleEditUser}
+              onDeleteUser={handleDeleteUser}
               onDeselectAll={usersSelection.handleDeselectAll}
               onDeselectOne={usersSelection.handleDeselectOne}
               onPageChange={handlePageChange}
