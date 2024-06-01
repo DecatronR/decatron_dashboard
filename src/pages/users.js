@@ -59,18 +59,25 @@ const Page = () => {
     setIsFormOpen(!isFormOpen);
   }
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/users/getusers', { withCredentials: true });
-        setUsersData(response.data);
-      } catch (err) {
-        console.error("Error fetching users: ", err);
-      }
-    };
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/users/getusers', { withCredentials: true });
+      setUsersData(response.data);
+    } catch (err) {
+      console.error("Error fetching users: ", err);
+    }
+  };
 
+
+  useEffect(() => {
     fetchUsers();
   }, []);
+
+  const handleUserFetched = () => {
+    fetchUsers();
+    setIsFormOpen(false);
+  }
+
 
   return (
     <>
@@ -122,7 +129,7 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            {isFormOpen && <CreateUserForm />}
+            {isFormOpen && <CreateUserForm onUserCreated={handleUserFetched} />}
             <UsersSearch />
             <UsersTable
               count={usersData.length}

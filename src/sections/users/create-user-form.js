@@ -9,7 +9,7 @@ import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import { CreateUserDB } from 'src/components/database/create-user';
 import axios from 'axios';
 
-const CreateUserForm = () => {
+const CreateUserForm = ({ onUserCreated }) => {
 
   const roleOptions = [
     { value: 'admin', label: 'Admin' },
@@ -60,62 +60,38 @@ const CreateUserForm = () => {
       const formattedDate = `${dd}/${mm}/${yyyy}`;
 
   console.log(formattedDate);
-      console.log(`Create user form details: `, `Name: ${values.firstName} ${values.lastName}, Email: ${values.email}, Role: ${values.role}`);
+    console.log(`Create user form details: `, `Name: ${values.firstName} ${values.lastName}, Email: ${values.email}, Role: ${values.role}`);
 
-      const userData =  {
-        name: `${values.firstName} ${values.lastName}`,
-        email: values.email,
-        phone: "553-481-3641",
-        role: values.role,
-        password: values.password,
-        confirmpassword: values.confirmPassword
+    const userData =  {
+      name: `${values.firstName} ${values.lastName}`,
+      email: values.email,
+      phone: "553-481-3641",
+      role: values.role,
+      password: values.password,
+      confirmpassword: values.confirmPassword
+    }
+    const createUserconfig = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:8080/auth/register',
+      headers: { },
+      data: userData,
+    }
+    try {
+      const res = await axios(createUserconfig);
+      console.log("Succesfully created new user: ", res);
+      onUserCreated();
+      if(res.statusText === "OK") {
+        helpers.setStatus({ success: true });
       }
-      const createUserconfig = {
-        method: 'post',
-        maxBodyLength: Infinity,
-        url: 'http://localhost:8080/auth/register',
-        headers: { },
-        data: userData,
-      }
-      try {
-        const res = await axios(createUserconfig);
-        console.log("Succesfully created new user: ", res);
-        if(res.statusText === "OK") {
-          helpers.setStatus({ success: true });
-        }
-        // await CreateUserDB.userDetails.add({
-        //   name: `${values.firstName} ${values.lastName}`,
-        //   email: values.email,
-        //   role: values.role,
-        //   date: formattedDate,
-        // });
-      } catch (err) {
-        console.log("There was an issue with adding user to database: ", err);
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
-      }
-
-      const fetchUserConfig = {
-        method: 'get',
-        maxBodyLength: Infinity,
-        url: 'http://localhost:8080/users/getusers',
-        headers: { }
-      }
-
-      try {
-        const res = await axios(fetchUserConfig)
-        console.log("Succesfully fethced user data: ", res);
-      } catch(err) {
-        console.log("There was an issue fetching user data: ", err);
-      }
+    } catch (err) {
+      console.log("There was an issue with adding user to database: ", err);
+      helpers.setStatus({ success: false });
+      helpers.setErrors({ submit: err.message });
+      helpers.setSubmitting(false);
+    }
     }
   });
-
-  
-
-
-  
 
   const handleRoleChange = (event) => {
     event.preventDefault();
