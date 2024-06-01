@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
 import { useRouter } from 'next/router';
 import {
   Avatar,
@@ -20,10 +19,8 @@ import {
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { CreateUserDB } from 'src/components/database/create-user';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
-import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
+import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 
 export const UsersTable = (props) => {
   const {
@@ -43,7 +40,6 @@ export const UsersTable = (props) => {
   } = props;
 
   const router = useRouter();
-  const [selectedRows, setSelectedRows] = useState([]);
 
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
@@ -52,39 +48,24 @@ export const UsersTable = (props) => {
     return page * rowsPerPage + index + 1;
   };
 
-  const users = useLiveQuery(() => CreateUserDB?.userDetails?.toArray());
-
   const handleEditClick = (userId) => {
-    router.push(`/edit-user/${userId}`);
-  }
-
-  const handleDeleteClick = (userId) => {
-    onDeleteUser(userId);
-  }
-  
-
-  const handleCheckboxChange = (event, userId) => {
-    const selectedIndex = selectedRows.indexOf(userId);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selectedRows, userId);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selectedRows.slice(1));
-    } else if (selectedIndex === selectedRows.length - 1) {
-      newSelected = newSelected.concat(selectedRows.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selectedRows.slice(0, selectedIndex),
-        selectedRows.slice(selectedIndex + 1),
-      );
+    if (onEditUser) {
+      onEditUser(userId);
+    } else {
+      router.push(`/edit-user/${userId}`);
     }
-
-    setSelectedRows(newSelected);
   };
 
-  const isSelected = (userId) => selectedRows.indexOf(userId) !== -1;
+  const handleDeleteClick = (userId) => {
+    if (onDeleteUser) {
+      onDeleteUser(userId);
+    }
+  };
 
+  const formatDate = (timestamp) => {
+    return new Date(timestamp).toISOString().split('T')[0];
+  };
+  
   return (
     <Card>
       <Scrollbar>
@@ -126,8 +107,8 @@ export const UsersTable = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users?.map((user, index) => {
-                const isItemSelected = isSelected(user.id);
+              {items.map((user, index) => {
+                const isItemSelected = selected.indexOf(user.id) !== -1;
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
@@ -139,7 +120,13 @@ export const UsersTable = (props) => {
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isItemSelected}
-                        onChange={(event) => handleCheckboxChange(event, user.id)}
+                        onChange={(event) => {
+                          if (event.target.checked) {
+                            onSelectOne?.(user.id);
+                          } else {
+                            onDeselectOne?.(user.id);
+                          }
+                        }}
                         inputProps={{ 'aria-labelledby': labelId }}
                       />
                     </TableCell>
@@ -167,23 +154,19 @@ export const UsersTable = (props) => {
                       {user.role}
                     </TableCell>
                     <TableCell>
-                      {user.date}
+                      {formatDate(user.createdAt)}
                     </TableCell>
                     <TableCell>
-                    <SvgIcon
-                        color="action"
-                        fontSize="small"
-                        cursor="pointer" 
-                    >
-                       <PencilIcon onClick={() => handleEditClick(user.id)} />
-                    </SvgIcon>
-                    <SvgIcon
-                        color="action"
-                        fontSize="small"
-                        cursor="pointer" 
-                    >
-                       <TrashIcon onClick={() => handleDeleteClick(user.id)} />
-                    </SvgIcon>    
+                      <IconButton onClick={() => handleEditClick(user.id)}>
+                        <SvgIcon fontSize="small">
+                          <PencilIcon />
+                        </SvgIcon>
+                      </IconButton>
+                      <IconButton onClick={() => handleDeleteClick(user.id)}>
+                        <SvgIcon fontSize="small">
+                          <TrashIcon />
+                        </SvgIcon>
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 );

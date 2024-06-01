@@ -116,8 +116,8 @@ export const AuthProvider = (props) => {
       dispatch({
         type: HANDLERS.SIGN_OUT
       });
-    } catch (error) {
-      console.error("Error during sign-out:", error);
+    } catch (err) {
+      console.error("Error during sign-out:", err);
     }
   };
 
