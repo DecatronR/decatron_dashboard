@@ -150,7 +150,7 @@ export const UsersTable = (props) => {
                     </TableCell>
                     <TableCell>
                       {/* the user id is initialized with an underscore exactly this way at the backend */}
-                      {user._id}
+                      {user.role}
                     </TableCell>
                     <TableCell>
                       {formatDate(user.createdAt)}

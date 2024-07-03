@@ -1,9 +1,18 @@
+import { useState } from 'react';
 import NextLink from 'next/link';
 import PropTypes from 'prop-types';
-import { Box, ButtonBase } from '@mui/material';
+import { Box, ButtonBase, SvgIcon, Collapse } from '@mui/material';
+import ChevronDownIcon from '@heroicons/react/24/solid/ChevronDownIcon';
+import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
 
 export const SideNavItem = (props) => {
-  const { active = false, disabled, external, icon, path, title } = props;
+  const { active = false, disabled, external, icon, path, title, subItems = [] } = props;
+  const [openSubItems, setOpenSubItems] = useState(false);
+  const hasSubItems = subItems.length > 0;
+
+  const handleToggle = () => {
+    setOpenSubItems((prevOpen) => !prevOpen);
+  };
 
   const linkProps = path
     ? external
@@ -19,6 +28,7 @@ export const SideNavItem = (props) => {
     : {};
 
   return (
+    <>
     <li>
       <ButtonBase
         sx={{
@@ -38,6 +48,7 @@ export const SideNavItem = (props) => {
             backgroundColor: 'rgba(255, 255, 255, 0.04)'
           }
         }}
+        onClick={hasSubItems ? handleToggle : undefined}
         {...linkProps}
       >
         {icon && (
@@ -77,8 +88,29 @@ export const SideNavItem = (props) => {
         >
           {title}
         </Box>
+        {hasSubItems && (
+            <SvgIcon fontSize="small" sx={{ ml: 1 }}>
+              {openSubItems ? <ChevronDownIcon /> : <ChevronRightIcon />}
+            </SvgIcon>
+          )}
       </ButtonBase>
     </li>
+    {hasSubItems && (
+  <Collapse in={openSubItems} timeout="auto" unmountOnExit>
+    <Box sx={{ pl: 4 }}>
+      {subItems.map((subItem) => (
+        <SideNavItem
+          key={subItem.title}
+          title={subItem.title}
+          path={subItem.path}
+          icon={subItem.icon}
+          active={subItem.path === path}
+        />
+      ))}
+    </Box>
+  </Collapse>
+)}
+</>
   );
 };
 

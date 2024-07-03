@@ -6,7 +6,7 @@ import UserIcon from '@heroicons/react/24/solid/UserIcon';
 import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import PlusCircleIcon from '@heroicons/react/24/solid/PlusCircleIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
-import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
+import WrenchIcon from '@heroicons/react/24/solid/WrenchIcon';
 import { SvgIcon } from '@mui/material';
 
 export const items = [
@@ -20,13 +20,50 @@ export const items = [
     )
   },
   {
-    title: 'Users',
+    title: 'User Management',
     path: '/users',
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
       </SvgIcon>
-    )
+    ),
+    subItems: [
+      {
+        title: 'Users',
+        path: '/users',
+      },
+      {
+        title: 'Add Role',
+        path: '/',
+      },
+    ]
+  },
+  {
+    title: 'Listing Configuration',
+    path: '/',
+    icon: (
+      <SvgIcon fontSize="small">
+        <WrenchIcon />
+      </SvgIcon>
+    ),
+    subItems: [
+      {
+        title: 'Listing Type',
+        path: '/',
+      },
+      {
+        title: 'Property Type',
+        path: '/',
+      },
+      {
+        title: 'Add State',
+        path: '/',
+      },
+      {
+        title: 'Add LGA',
+        path: '/',
+      },
+    ]
   },
   {
     title: 'Create Listing',
@@ -73,31 +110,4 @@ export const items = [
       </SvgIcon>
     )
   },
-  {
-    title: 'Login',
-    path: '/auth/login',
-    icon: (
-      <SvgIcon fontSize="small">
-        <LockClosedIcon />
-      </SvgIcon>
-    )
-  },
-  // {
-  //   title: 'Register',
-  //   path: '/auth/register',
-  //   icon: (
-  //     <SvgIcon fontSize="small">
-  //       <UserPlusIcon />
-  //     </SvgIcon>
-  //   )
-  // },
-  // {
-  //   title: 'Error',
-  //   path: '/404',
-  //   icon: (
-  //     <SvgIcon fontSize="small">
-  //       <XCircleIcon />
-  //     </SvgIcon>
-  //   )
-  // }
 ];
