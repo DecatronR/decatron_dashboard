@@ -111,7 +111,7 @@ export const SideNav = (props) => {
 
               return (
                 <SideNavItem
-                  // active={active}
+                  active={active}
                   disabled={item.disabled}
                   external={item.external}
                   icon={item.icon}

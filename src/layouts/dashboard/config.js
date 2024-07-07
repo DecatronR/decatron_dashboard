@@ -21,7 +21,7 @@ export const items = [
   },
   {
     title: 'User Management',
-    path: '/users',
+    path: '#',
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
@@ -34,13 +34,13 @@ export const items = [
       },
       {
         title: 'Add Role',
-        path: '/',
+        path: '/roles',
       },
     ]
   },
   {
     title: 'Listing Configuration',
-    path: '/',
+    path: '#',
     icon: (
       <SvgIcon fontSize="small">
         <WrenchIcon />
@@ -49,19 +49,19 @@ export const items = [
     subItems: [
       {
         title: 'Listing Type',
-        path: '/',
+        path: '/listing-types',
       },
       {
         title: 'Property Type',
-        path: '/',
+        path: '/property-types',
       },
       {
         title: 'Add State',
-        path: '/',
+        path: '/states',
       },
       {
         title: 'Add LGA',
-        path: '/',
+        path: '/local_governments',
       },
     ]
   },
