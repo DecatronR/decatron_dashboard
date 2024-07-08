@@ -19,9 +19,24 @@ const CreatePropertyTypesForm = ({ onPropertyTypeCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
-        console.log("Created new property type");
-    }
+      const createPropertyTypeConfig = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'http://localhost:8080/propertyType/createPropertyType',
+        headers: { },
+        data : values.propertyType
+      };
 
+      try {
+        const res = await axios(createPropertyTypeConfig)
+        console.log("Succesfully created new property type: ", res);
+      } catch (error) {
+        console.log("Issue creating new property type: ", error);
+        helpers.setStatus({ success: false });
+        helpers.setErrors({ submit: err.message });
+        helpers.setSubmitting(false); 
+      }
+    }
   });
 
 

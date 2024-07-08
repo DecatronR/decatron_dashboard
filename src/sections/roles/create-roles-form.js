@@ -20,10 +20,23 @@ const CreateRoleForm = ({ onRoleCreated }) => {
 
     onSubmit: async (values, helpers) => {
         console.log("Created new role");
+
+        const createRoleConfig = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: 'http://localhost:8080/role/createRole',
+          headers: { },
+          data : values.role,
+        };
+
+        try {
+          const res = await axios(createRoleConfig);
+          console.log("Succesfully created new role: ", res);
+        } catch (error) {
+          console.log("Issue with creating role: ", error);
+        }
     }
-
   });
-
 
   return (
     <>

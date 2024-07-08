@@ -1,12 +1,7 @@
 import Head from 'next/head';
-import NextLink from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Link, Stack, TextField, Typography, Select, MenuItem } from '@mui/material';
-import { useAuth } from 'src/hooks/use-auth';
-import { Layout as AuthLayout } from 'src/layouts/auth/layout';
-import { CreateUserDB } from 'src/components/database/create-user';
+import { Box, Button, Stack, TextField, Typography, Select, MenuItem } from '@mui/material';
 import axios from 'axios';
 
 const CreateUserForm = ({ onUserCreated }) => {
@@ -70,7 +65,7 @@ const CreateUserForm = ({ onUserCreated }) => {
       password: values.password,
       confirmpassword: values.confirmPassword
     }
-    const createUserconfig = {
+    const createUserConfig = {
       method: 'post',
       maxBodyLength: Infinity,
       url: 'http://localhost:8080/auth/register',
@@ -78,14 +73,14 @@ const CreateUserForm = ({ onUserCreated }) => {
       data: userData,
     }
     try {
-      const res = await axios(createUserconfig);
+      const res = await axios(createUserConfig);
       console.log("Succesfully created new user: ", res);
       onUserCreated();
       if(res.statusText === "OK") {
         helpers.setStatus({ success: true });
       }
     } catch (err) {
-      console.log("There was an issue with adding user to database: ", err);
+      console.log("issue with creating new user: ", err);
       helpers.setStatus({ success: false });
       helpers.setErrors({ submit: err.message });
       helpers.setSubmitting(false);

@@ -19,11 +19,26 @@ const CreateListingTypesForm = ({ onListingTypeCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
-        console.log("Created new listing type");
+
+        const createListingTypeConfig = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: 'http://localhost:8080/listingType/createListingType',
+          headers: { },
+          data : values.listingType,
+        }
+
+        try {
+          const res = await axios(createListingTypeConfig);
+          console.log("Successfully created listing type: ", res);
+        } catch(error) {
+          console.log("Issue with creating new listing type: ", err);
+          helpers.setStatus({ success: false });
+          helpers.setErrors({ submit: err.message });
+          helpers.setSubmitting(false);
+        }
     }
-
   });
-
 
   return (
     <>
