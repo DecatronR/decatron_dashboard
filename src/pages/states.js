@@ -11,7 +11,7 @@ import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/materia
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { StatesTable } from 'src/sections/state/states-table';
-import { StatesSearch } from 'src/sections/state/state-search';
+import { StatesSearch } from 'src/sections/state/states-search';
 import { applyPagination } from 'src/utils/apply-pagination';
 import CreateStatesForm from 'src/sections/state/create-states-form';
 
@@ -24,12 +24,12 @@ const useStates = (data, page, rowsPerPage) => {
   );
 };
 
-const useStatesIds = (state) => {
+const useStatesIds = (states) => {
   return useMemo(
     () => {
       return states.map((state) => state.id);
     },
-    [state]
+    [states]
   );
 };
 

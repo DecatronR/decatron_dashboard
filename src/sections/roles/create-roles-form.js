@@ -19,14 +19,15 @@ const CreateRoleForm = ({ onRoleCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
-        console.log("Created new role");
-
         const createRoleConfig = {
           method: 'post',
           maxBodyLength: Infinity,
           url: 'http://localhost:8080/role/createRole',
           headers: { },
-          data : values.role,
+          data : {
+            "roleName" : values.role,
+          },
+          withCredentials: true,
         };
 
         try {
@@ -34,6 +35,9 @@ const CreateRoleForm = ({ onRoleCreated }) => {
           console.log("Succesfully created new role: ", res);
         } catch (error) {
           console.log("Issue with creating role: ", error);
+          helpers.setStatus({ success: false });
+          helpers.setErrors({ submit: err.message });
+          helpers.setSubmitting(false);
         }
     }
   });

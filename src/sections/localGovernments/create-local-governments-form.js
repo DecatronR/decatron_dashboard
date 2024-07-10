@@ -19,9 +19,29 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
-        console.log("Created new LGA");
-    }
+      const localGovernmentData = {
+         stateId: "6638c2ea07655b777b920fe5", // fetch stateId and pass it here
+          lga: values.localGovernment
+      }
+        const createLocalGovernmentConfig = {
+        method: 'post',
+        maxBodyLength: Infinity,
+          url: 'http://localhost:8080/lga/createLGA',
+          headers: { },
+          data : localGovernmentData,
+          withCredentials: true,
+        }
 
+        try {
+          const res = await axios(createLocalGovernmentConfig);
+          console.log("Succesfully created new property types: ", res);
+        } catch(err) {
+          console.log("Issue creating new LGA type: ", err);
+          helpers.setStatus({ success: false });
+          helpers.setErrors({ submit: err.message });
+          helpers.setSubmitting(false); 
+        }
+    }
   });
 
 

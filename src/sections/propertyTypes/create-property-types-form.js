@@ -24,7 +24,10 @@ const CreatePropertyTypesForm = ({ onPropertyTypeCreated }) => {
         maxBodyLength: Infinity,
         url: 'http://localhost:8080/propertyType/createPropertyType',
         headers: { },
-        data : values.propertyType
+        data : {
+          propertyType: values.propertyType,
+        },
+        withCredentials: true,
       };
 
       try {

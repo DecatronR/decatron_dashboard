@@ -19,9 +19,28 @@ const CreateStatesForm = ({ onStateCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
-        console.log("Created new state");
-    }
+      console.log("Triggered create state button");
+      const createStateConfig = {
+        method: 'post',
+        maxBodyLength: Infinity,
+          url: 'http://localhost:8080/state/createState',
+          headers: { },
+          data : {
+            state: values.state,
+          },
+        withCredentials: true,
+      }
 
+      try {
+        const res = await axios(createStateConfig);
+        console.log("Successfully created new property type: ", res);
+      } catch(err) {
+        console.log("Issue creating new state type: ", err);
+        helpers.setStatus({ success: false });
+        helpers.setErrors({ submit: err.message });
+        helpers.setSubmitting(false); 
+      }
+    }
   });
 
 

@@ -25,7 +25,10 @@ const CreateListingTypesForm = ({ onListingTypeCreated }) => {
           maxBodyLength: Infinity,
           url: 'http://localhost:8080/listingType/createListingType',
           headers: { },
-          data : values.listingType,
+          data : {
+            listingType: values.listingType,
+          },
+          withCredentials: true,
         }
 
         try {
