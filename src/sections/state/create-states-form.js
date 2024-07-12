@@ -19,7 +19,7 @@ const CreateStatesForm = ({ onStateCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
-      console.log("Triggered create state button");
+      
       const createStateConfig = {
         method: 'post',
         maxBodyLength: Infinity,
@@ -30,7 +30,7 @@ const CreateStatesForm = ({ onStateCreated }) => {
           },
         withCredentials: true,
       }
-
+      console.log("Triggered create state button");
       try {
         const res = await axios(createStateConfig);
         console.log("Successfully created new property type: ", res);

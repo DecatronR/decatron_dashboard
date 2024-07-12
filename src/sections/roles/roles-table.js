@@ -128,18 +128,12 @@ export const RolesTable = (props) => {
                         spacing={2}
                       >
                         <Avatar src={role.avatar}>
-                          {getInitials(role.name)}
+                          {getInitials(role.roleName)}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {role.name}
+                          {role.roleName}
                         </Typography>
                       </Stack>
-                    </TableCell>
-                    <TableCell>
-                      Edit
-                    </TableCell>
-                    <TableCell>
-                      Delete
                     </TableCell>
                     <TableCell>
                       {/* the user id is initialized with an underscore exactly this way at the backend */}
@@ -148,8 +142,10 @@ export const RolesTable = (props) => {
                           <PencilIcon />
                         </SvgIcon>
                       </IconButton>
-                      {/* the user id is initialized with an underscore exactly this way at the backend */}
-                      <IconButton onClick={() => handleDeleteClick(role._id)}>
+                    </TableCell>
+                    <TableCell>
+                     {/* the user id is initialized with an underscore exactly this way at the backend */}
+                     <IconButton onClick={() => handleDeleteClick(role._id)}>
                         <SvgIcon fontSize="small">
                           <TrashIcon />
                         </SvgIcon>

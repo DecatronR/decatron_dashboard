@@ -34,6 +34,10 @@ const CreateListingTypesForm = ({ onListingTypeCreated }) => {
         try {
           const res = await axios(createListingTypeConfig);
           console.log("Successfully created listing type: ", res);
+          onListingTypeCreated();
+          if(res.statusText === "Created") {
+            helpers.setStatus({ success: true });
+          }
         } catch(error) {
           console.log("Issue with creating new listing type: ", err);
           helpers.setStatus({ success: false });

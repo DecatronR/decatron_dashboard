@@ -33,6 +33,7 @@ const CreateRoleForm = ({ onRoleCreated }) => {
         try {
           const res = await axios(createRoleConfig);
           console.log("Succesfully created new role: ", res);
+          onRoleCreated();
         } catch (error) {
           console.log("Issue with creating role: ", error);
           helpers.setStatus({ success: false });

@@ -33,8 +33,9 @@ const CreatePropertyTypesForm = ({ onPropertyTypeCreated }) => {
       try {
         const res = await axios(createPropertyTypeConfig)
         console.log("Succesfully created new property type: ", res);
-      } catch (error) {
-        console.log("Issue creating new property type: ", error);
+        onPropertyTypeCreated();
+      } catch (err) {
+        console.log("Issue creating new property type: ", err);
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false); 

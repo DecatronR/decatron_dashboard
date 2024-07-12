@@ -61,20 +61,20 @@ const Page = () => {
     setIsFormOpen(!isFormOpen);
   }
 
-//   const fetchRoles = async () => {
-//     try {
-//       const response = await axios.get('http://localhost:8080/users/getusers', { withCredentials: true });
-//       console.log("User data: ",response.data);
-//       setUsersData(response.data);
-//     } catch (err) {
-//       console.error("Error fetching users: ", err);
-//     }
-//   };
+  const fetchRoles = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/role/getRoles', { withCredentials: true });
+      console.log("User data: ",response.data);
+      setRolesData(response.data);
+    } catch (err) {
+      console.error("Error fetching users: ", err);
+    }
+  };
 
 
-  // useEffect(() => {
-  //   fetchRoles();
-  // }, []);
+  useEffect(() => {
+    fetchRoles();
+  }, []);
 
   const handleRoleFetched = () => {
     fetchRoles();
@@ -147,7 +147,7 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            {isFormOpen && <CreateRoleForm />} 
+            {isFormOpen && <CreateRoleForm onRoleCreated={handleRoleFetched}/>}
             {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
             <RolesSearch />
             <RolesTable

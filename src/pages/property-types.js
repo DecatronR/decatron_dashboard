@@ -61,20 +61,20 @@ const Page = () => {
     setIsFormOpen(!isFormOpen);
   }
 
-//   const fetchRoles = async () => {
-//     try {
-//       const response = await axios.get('http://localhost:8080/users/getusers', { withCredentials: true });
-//       console.log("User data: ",response.data);
-//       setUsersData(response.data);
-//     } catch (err) {
-//       console.error("Error fetching users: ", err);
-//     }
-//   };
+  const fetchPropertyTypes = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/propertyType/fetchPropertyType', { withCredentials: true });
+      console.log("Property type data: ",response.data);
+      setPropertyTypesData(response.data);
+    } catch (err) {
+      console.error("Error fetching property type : ", err);
+    }
+  };
 
 
-  // useEffect(() => {
-  //   fetchRoles();
-  // }, []);
+  useEffect(() => {
+    fetchPropertyTypes();
+  }, []);
 
   const handlePropertyTypeFetched = () => {
     fetchPropertyTypes();
@@ -147,7 +147,7 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            {isFormOpen && <CreatePropertyTypesForm />}
+            {isFormOpen && <CreatePropertyTypesForm onPropertyTypeCreated={handlePropertyTypeFetched} />}
             {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
             <PropertyTypesSearch />
             <PropertyTypesTable

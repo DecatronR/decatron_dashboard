@@ -128,28 +128,22 @@ export const ListingTypesTable = (props) => {
                         spacing={2}
                       >
                         <Avatar src={listingType.avatar}>
-                          {getInitials(listingType.name)}
+                          {getInitials(listingType.listingType)}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {listingType.name}
+                          {listingType.listingType}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      Edit
-                    </TableCell>
-                    <TableCell>
-                      Delete
-                    </TableCell>
-                    <TableCell>
-                      {/* the user id is initialized with an underscore exactly this way at the backend */}
-                      <IconButton onClick={() => handleEditClick(listingType._id)}>
+                    <IconButton onClick={() => handleEditClick(listingType._id)}>
                         <SvgIcon fontSize="small">
                           <PencilIcon />
                         </SvgIcon>
                       </IconButton>
-                      {/* the user id is initialized with an underscore exactly this way at the backend */}
-                      <IconButton onClick={() => handleDeleteClick(listingType._id)}>
+                    </TableCell>
+                    <TableCell>
+                    <IconButton onClick={() => handleDeleteClick(listingType._id)}>
                         <SvgIcon fontSize="small">
                           <TrashIcon />
                         </SvgIcon>

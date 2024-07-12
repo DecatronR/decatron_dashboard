@@ -61,20 +61,20 @@ const Page = () => {
     setIsFormOpen(!isFormOpen);
   }
 
-//   const fetchRoles = async () => {
-//     try {
-//       const response = await axios.get('http://localhost:8080/users/getusers', { withCredentials: true });
-//       console.log("User data: ",response.data);
-//       setUsersData(response.data);
-//     } catch (err) {
-//       console.error("Error fetching users: ", err);
-//     }
-//   };
+  const fetchListingTypes = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/listingType/fetchListingType', { withCredentials: true });
+      console.log("Listing data: ",response.data);
+      setListingTypesData(response.data);
+    } catch (err) {
+      console.error("Error fetching listingTypes: ", err);
+    }
+  };
 
 
-  // useEffect(() => {
-  //   fetchRoles();
-  // }, []);
+  useEffect(() => {
+    fetchListingTypes();
+  }, []);
 
   const handleListingTypeFetched = () => {
     fetchListingTypes();
@@ -147,7 +147,7 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            {isFormOpen && <CreateListingTypesForm />}
+            {isFormOpen && <CreateListingTypesForm onListingTypeCreated={handleListingTypeFetched}/>}
             {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
             <ListingTypesSearch />
             <ListingTypesTable

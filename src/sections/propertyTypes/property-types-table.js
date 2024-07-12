@@ -128,18 +128,12 @@ export const PropertyTypesTable = (props) => {
                         spacing={2}
                       >
                         <Avatar src={propertyType.avatar}>
-                          {getInitials(propertyType.name)}
+                          {getInitials(propertyType.propertyType)}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {propertyType.name}
+                          {propertyType.propertyType}
                         </Typography>
                       </Stack>
-                    </TableCell>
-                    <TableCell>
-                      Edit
-                    </TableCell>
-                    <TableCell>
-                      Delete
                     </TableCell>
                     <TableCell>
                       {/* the user id is initialized with an underscore exactly this way at the backend */}
@@ -148,8 +142,10 @@ export const PropertyTypesTable = (props) => {
                           <PencilIcon />
                         </SvgIcon>
                       </IconButton>
-                      {/* the user id is initialized with an underscore exactly this way at the backend */}
-                      <IconButton onClick={() => handleDeleteClick(propertyType._id)}>
+                    </TableCell>
+                    <TableCell>
+                     {/* the user id is initialized with an underscore exactly this way at the backend */}
+                     <IconButton onClick={() => handleDeleteClick(propertyType._id)}>
                         <SvgIcon fontSize="small">
                           <TrashIcon />
                         </SvgIcon>
