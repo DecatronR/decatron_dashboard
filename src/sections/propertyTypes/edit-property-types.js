@@ -3,17 +3,17 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 
-const EditRoles = ({ initialData, onSave, onCancel }) => {
+const EditPropertyTypes = ({ initialData, onSave, onCancel }) => {
   const formik = useFormik({
     initialValues: {
-      role: initialData || '',
+      propertyType: initialData || '',
       submit: null,
     },
     validationSchema: Yup.object({
-      role: Yup.string().max(255).required("field can't be empty"),
+      propertyType: Yup.string().max(255).required("field can't be empty"),
     }),
     onSubmit: (values, helpers) => {
-      onSave(values.role);
+      onSave(values.propertyType);
       helpers.setSubmitting(false);
     },
   });
@@ -28,20 +28,20 @@ const EditRoles = ({ initialData, onSave, onCancel }) => {
       }}
     >
       <Stack spacing={1} sx={{ mb: 2 }}>
-        <Typography variant="h6">Edit Role</Typography>
+        <Typography variant="h6">Edit Property Type</Typography>
       </Stack>
       <form noValidate onSubmit={formik.handleSubmit}>
         <Stack spacing={2}>
           <TextField
-            error={!!(formik.touched.role && formik.errors.role)}
+            error={!!(formik.touched.propertyType && formik.errors.propertyType)}
             fullWidth
-            helperText={formik.touched.role && formik.errors.role}
-            label="Role"
-            name="role"
+            helperText={formik.touched.propertyType && formik.errors.propertyType}
+            label="Property Type"
+            name="propertyType"
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
             type="text"
-            value={formik.values.role}
+            value={formik.values.propertyType}
           />
           {formik.errors.submit && (
             <Typography color="error" sx={{ mt: 2 }} variant="body2">
@@ -62,4 +62,4 @@ const EditRoles = ({ initialData, onSave, onCancel }) => {
   );
 };
 
-export default EditRoles;
+export default EditPropertyTypes;

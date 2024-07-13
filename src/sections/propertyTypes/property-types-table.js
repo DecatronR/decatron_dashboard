@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
+import axios from 'axios';
 import {
   Avatar,
   Box,
@@ -21,25 +21,26 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
+import EditPropertyTypes from './edit-property-types';
 
 export const PropertyTypesTable = (props) => {
   const {
     count = 0,
     items = [],
+    onRefresh,
     onDeselectAll,
     onDeselectOne,
     onPageChange = () => {},
     onRowsPerPageChange,
     onSelectAll,
     onSelectOne,
-    onEditPropertyType,
-    onDeletePropertyType,
     page = 0,
     rowsPerPage = 0,
     selected = []
   } = props;
 
-  const router = useRouter();
+  const [editingPropertyType, setEditingPropertyType] = useState(null);
+  const [existingData, setExistingData] = useState(null);
 
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
@@ -48,17 +49,45 @@ export const PropertyTypesTable = (props) => {
     return page * rowsPerPage + index + 1;
   };
 
-  const handleDeleteClick = (propertyTypeId) => {
-    if(onDeletePropertyType) {
-      onDeleteUser(propertyTypeId)
+  const handleEditClick = async (propertyTypeId) => {
+    console.log("fetched property type id: ", propertyTypeId);
+    setEditingPropertyType(propertyTypeId);
+    try {
+      const res = await axios.post('http://localhost:8080/propertyType/editPropertyType', { id: propertyTypeId }, { withCredentials: true });
+      console.log("Exisiting data: ", res.data.data.propertyType);
+      setExistingData(res.data.data.propertyType);
+    } catch (error) {
+      console.error('Error fetching property type data:', error);
     }
-  }
+  };
 
-  const handleEditClick = (propertyTypeId) => {
-    if(onEditPropertyType) {
-      onEditUser(propertyTypeId);
+  const handleCancel = () => {
+    setEditingPropertyType(null);
+    setExistingData(null);
+  };
+
+  const handleSave = async (updatedPropertyType) => {
+    console.log("Role id: ", editingPropertyType);
+    try {
+      const res = await axios.post('http://localhost:8080/propertyType/updatePropertyType', { id: editingPropertyType, propertyType: updatedPropertyType}, { withCredentials: true });
+      console.log("Updated property type: ", res.data);
+      setEditingPropertyType(null);
+      setExistingData(null);
+      onRefresh();
+    } catch (error) {
+      console.error('Error updating role:', error);
     }
-  }
+  };
+
+  const handleDeleteClick = async (propertyTypeId) => {
+    try {
+      const res = await axios.post('http://localhost:8080/propertyType/deletePropertyType', { propertyTypeId: propertyTypeId }, { withCredentials: true });
+      console.log('Delete propertyType:', res);
+      onRefresh();
+    } catch (err) {
+      console.error('Error deleting propertyType:', err);
+    }
+  };
   
   return (
     <Card>
@@ -142,6 +171,13 @@ export const PropertyTypesTable = (props) => {
                           <PencilIcon />
                         </SvgIcon>
                       </IconButton>
+                      {editingPropertyType === propertyType._id && existingData && (
+                        <EditPropertyTypes
+                          initialData={existingData}
+                          onSave={handleSave}
+                          onCancel={handleCancel}
+                        />
+                      )}
                     </TableCell>
                     <TableCell>
                      {/* the user id is initialized with an underscore exactly this way at the backend */}
