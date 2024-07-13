@@ -81,21 +81,6 @@ const Page = () => {
     setIsFormOpen(false);
   }
 
-  const handleEditListingType = async (listingTypeId) => {
-    router.push(`/edit-user/${userId}`);
-  };
-
-  const handleDeleteListingType = async (listingTypeId) => {
-    try {
-      console.log("Listing Type Id ready: ", listingTypeId);
-      const res = await axios.post('http://localhost:8080/users/delete', { id: userId }, { withCredentials: true });
-      console.log("Delete users: ", res);
-      fetchUsers();
-    } catch(err) {
-      console.error("Error deleting users: ", err);
-    }
-  };
-
 
   return (
     <>
@@ -153,8 +138,7 @@ const Page = () => {
             <ListingTypesTable
               count={listingTypesData.length}
               items={listingTypes}
-              onEditListingType={handleEditListingType}
-              onDeleteListingType={handleDeleteListingType}
+              onRefresh={handleListingTypeFetched}
               onDeselectAll={listingTypesSelection.handleDeselectAll}
               onDeselectOne={listingTypesSelection.handleDeselectOne}
               onPageChange={handlePageChange}

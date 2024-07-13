@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
+import axios from 'axios';
 import {
   Avatar,
   Box,
@@ -21,25 +21,26 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
+import EditListingTypes from './edit-listing-types';
 
 export const ListingTypesTable = (props) => {
   const {
     count = 0,
     items = [],
+    onRefresh,
     onDeselectAll,
     onDeselectOne,
     onPageChange = () => {},
     onRowsPerPageChange,
     onSelectAll,
     onSelectOne,
-    onEditListingType,
-    onDeleteListingType,
     page = 0,
     rowsPerPage = 0,
     selected = []
   } = props;
 
-  const router = useRouter();
+  const [editingListingType, setEditingListingType] = useState(null);
+  const [existingData, setExistingData] = useState(null);
 
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
@@ -48,17 +49,45 @@ export const ListingTypesTable = (props) => {
     return page * rowsPerPage + index + 1;
   };
 
-  const handleDeleteClick = (listingTypeId) => {
-    if(onDeleteListingType) {
-      onDeleteUser(listingTypeId)
+  const handleEditClick = async (listingTypeId) => {
+    console.log("fetched listing type id: ", listingTypeId);
+    setEditingListingType(listingTypeId);
+    try {
+      const res = await axios.post('http://localhost:8080/listingType/editListingType', { id: listingTypeId }, { withCredentials: true });
+      console.log("Exisiting data: ", res.data.data.listingType);
+      setExistingData(res.data.data.listingType);
+    } catch (error) {
+      console.error('Error fetching property type data:', error);
     }
-  }
+  };
 
-  const handleEditClick = (listingTypeId) => {
-    if(onEditListingType) {
-      onEditUser(listingTypeId);
+  const handleCancel = () => {
+    setEditingListingType(null);
+    setExistingData(null);
+  };
+
+  const handleSave = async (updatedlistingType) => {
+    console.log("Listing type id: ", editingListingType);
+    try {
+      const res = await axios.post('http://localhost:8080/listingType/updateListingType', { id: editingListingType, listingType: updatedlistingType}, { withCredentials: true });
+      console.log("Updated property type: ", res.data);
+      setEditingListingType(null);
+      setExistingData(null);
+      onRefresh();
+    } catch (error) {
+      console.error('Error updating role:', error);
     }
-  }
+  };
+
+  const handleDeleteClick = async (listingTypeId) => {
+    try {
+      const res = await axios.post('http://localhost:8080/listingType/deletelistingType', { id: listingTypeId }, { withCredentials: true });
+      console.log('Delete listingType:', res);
+      onRefresh();
+    } catch (err) {
+      console.error('Error deleting listingType:', err);
+    }
+  };
   
   return (
     <Card>
@@ -141,6 +170,13 @@ export const ListingTypesTable = (props) => {
                           <PencilIcon />
                         </SvgIcon>
                       </IconButton>
+                      {editingListingType === listingType._id && existingData && (
+                        <EditListingTypes
+                          initialData={existingData}
+                          onSave={handleSave}
+                          onCancel={handleCancel}
+                        />
+                      )}
                     </TableCell>
                     <TableCell>
                     <IconButton onClick={() => handleDeleteClick(listingType._id)}>

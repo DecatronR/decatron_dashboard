@@ -81,7 +81,7 @@ export const PropertyTypesTable = (props) => {
 
   const handleDeleteClick = async (propertyTypeId) => {
     try {
-      const res = await axios.post('http://localhost:8080/propertyType/deletePropertyType', { propertyTypeId: propertyTypeId }, { withCredentials: true });
+      const res = await axios.post('http://localhost:8080/propertyType/deletePropertyType', { id: propertyTypeId }, { withCredentials: true });
       console.log('Delete propertyType:', res);
       onRefresh();
     } catch (err) {
