@@ -81,21 +81,6 @@ const Page = () => {
     setIsFormOpen(false);
   }
 
-  const handleEditRole = async (roleId) => {
-    router.push(`/edit-role/${roleId}`);
-  };
-
-  const handleDeleteRole = async (roleId) => {
-    try {
-      console.log("Role Id ready: ", roleId);
-      const res = await axios.post('http://localhost:8080/users/delete', { id: userId }, { withCredentials: true });
-      console.log("Delete roles: ", res);
-      fetchUsers();
-    } catch(err) {
-      console.error("Error deleting role: ", err);
-    }
-  };
-
 
   return (
     <>
@@ -153,8 +138,7 @@ const Page = () => {
             <RolesTable
               count={rolesData.length}
               items={roles}
-              onEditRole={handleEditRole}
-              onDeleteRole={handleDeleteRole}
+              onRefresh={handleRoleFetched}
               onDeselectAll={rolesSelection.handleDeselectAll}
               onDeselectOne={rolesSelection.handleDeselectOne}
               onPageChange={handlePageChange}

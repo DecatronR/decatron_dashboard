@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
+import axios from 'axios';
 import {
   Avatar,
   Box,
@@ -21,45 +21,74 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
+import EditRoles from './edit-roles';
 
 export const RolesTable = (props) => {
   const {
     count = 0,
     items = [],
+    onRefresh,
     onDeselectAll,
     onDeselectOne,
     onPageChange = () => {},
     onRowsPerPageChange,
     onSelectAll,
     onSelectOne,
-    onEditRole,
-    onDeleteRole,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
   } = props;
 
-  const router = useRouter();
+  const [editingRole, setEditingRole] = useState(null);
+  const [existingData, setExistingData] = useState(null);
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items.length > 0 && selected.length === items.length;
 
   const serialNumber = (index) => {
     return page * rowsPerPage + index + 1;
   };
 
-  const handleDeleteClick = (roleId) => {
-    if(onDeleteRole) {
-      onDeleteUser(roleId)
+  const handleEditClick = async (roleId) => {
+    console.log("fetched role id: ", roleId);
+    setEditingRole(roleId);
+    try {
+      const res = await axios.post('http://localhost:8080/role/editRole', { roleId: roleId }, { withCredentials: true });
+      console.log("Exisiting data: ", res.data.data.roleName);
+      setExistingData(res.data.data.roleName);
+    } catch (error) {
+      console.error('Error fetching role data:', error);
     }
-  }
+  };
 
-  const handleEditClick = (roleId) => {
-    if(onEditRole) {
-      onEditUser(roleId);
+  const handleCancel = () => {
+    setEditingRole(null);
+    setExistingData(null);
+  };
+
+  const handleSave = async (updatedRole) => {
+    console.log("Role id: ", editingRole);
+    try {
+      const res = await axios.post('http://localhost:8080/role/updateRole', { roleId: editingRole, roleName: updatedRole}, { withCredentials: true });
+      console.log("Updated role: ", res.data);
+      setEditingRole(null);
+      setExistingData(null);
+      onRefresh();
+    } catch (error) {
+      console.error('Error updating role:', error);
     }
-  }
-  
+  };
+
+  const handleDeleteClick = async (roleId) => {
+    try {
+      const res = await axios.post('http://localhost:8080/role/deleteRole', { roleId: roleId }, { withCredentials: true });
+      console.log('Delete role:', res);
+      onRefresh();
+    } catch (err) {
+      console.error('Error deleting role:', err);
+    }
+  };
+
   return (
     <Card>
       <Scrollbar>
@@ -80,18 +109,10 @@ export const RolesTable = (props) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>
-                  #
-                </TableCell>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Edit
-                </TableCell>
-                <TableCell>
-                  Delete
-                </TableCell>
+                <TableCell>#</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Edit</TableCell>
+                <TableCell>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -100,11 +121,7 @@ export const RolesTable = (props) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
-                  <TableRow
-                    hover
-                    key={role.id}
-                    selected={isItemSelected}
-                  >
+                  <TableRow hover key={role.id} selected={isItemSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isItemSelected}
@@ -118,34 +135,29 @@ export const RolesTable = (props) => {
                         inputProps={{ 'aria-labelledby': labelId }}
                       />
                     </TableCell>
+                    <TableCell>{serialNumber(index)}</TableCell>
                     <TableCell>
-                      {serialNumber(index)}
-                    </TableCell>
-                    <TableCell>
-                      <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={2}
-                      >
-                        <Avatar src={role.avatar}>
-                          {getInitials(role.roleName)}
-                        </Avatar>
-                        <Typography variant="subtitle2">
-                          {role.roleName}
-                        </Typography>
+                      <Stack alignItems="center" direction="row" spacing={2}>
+                        <Avatar src={role.avatar}>{getInitials(role.roleName)}</Avatar>
+                        <Typography variant="subtitle2">{role.roleName}</Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {/* the user id is initialized with an underscore exactly this way at the backend */}
                       <IconButton onClick={() => handleEditClick(role._id)}>
                         <SvgIcon fontSize="small">
                           <PencilIcon />
                         </SvgIcon>
                       </IconButton>
+                      {editingRole === role._id && existingData && (
+                        <EditRoles
+                          initialData={existingData}
+                          onSave={handleSave}
+                          onCancel={handleCancel}
+                        />
+                      )}
                     </TableCell>
                     <TableCell>
-                     {/* the user id is initialized with an underscore exactly this way at the backend */}
-                     <IconButton onClick={() => handleDeleteClick(role._id)}>
+                      <IconButton onClick={() => handleDeleteClick(role._id)}>
                         <SvgIcon fontSize="small">
                           <TrashIcon />
                         </SvgIcon>
@@ -184,7 +196,7 @@ RolesTable.propTypes = {
   onDeleteRole: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };
 
 export default RolesTable;
