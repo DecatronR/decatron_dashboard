@@ -1,3 +1,4 @@
+import React from 'react';
 import Head from 'next/head';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -12,14 +13,14 @@ const CreateStatesForm = ({ onStateCreated }) => {
       submit: null
     },
     validationSchema: Yup.object({
-      role: Yup
+      state: Yup
         .string()
         .max(255)
         .required("field can't be empty"),
     }),
 
     onSubmit: async (values, helpers) => {
-      
+      console.log("Create state button clicked");
       const createStateConfig = {
         method: 'post',
         maxBodyLength: Infinity,
@@ -33,9 +34,9 @@ const CreateStatesForm = ({ onStateCreated }) => {
       console.log("Triggered create state button");
       try {
         const res = await axios(createStateConfig);
-        console.log("Successfully created new property type: ", res);
+        console.log("Successfully created new state: ", res);
       } catch(err) {
-        console.log("Issue creating new state type: ", err);
+        console.log("Issue creating new state: ", err);
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false); 

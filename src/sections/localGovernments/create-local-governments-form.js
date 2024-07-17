@@ -12,13 +12,14 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
       submit: null
     },
     validationSchema: Yup.object({
-      role: Yup
+      localGovernment: Yup
         .string()
         .max(255)
         .required("field can't be empty"),
     }),
 
     onSubmit: async (values, helpers) => {
+      console.log("Create button clicked");
       const localGovernmentData = {
          stateId: "6638c2ea07655b777b920fe5", // fetch stateId and pass it here
           lga: values.localGovernment
