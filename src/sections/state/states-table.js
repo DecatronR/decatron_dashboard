@@ -39,7 +39,8 @@ export const StatesTable = (props) => {
     selected = []
   } = props;
 
-  const router = useRouter();
+  const [editingRole, setEditingRole] = useState(null);
+  const [existingData, setExistingData] = useState(null);
 
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
@@ -48,17 +49,45 @@ export const StatesTable = (props) => {
     return page * rowsPerPage + index + 1;
   };
 
-  const handleDeleteClick = (stateId) => {
-    if(onDeleteState) {
-      onDeleteUser(stateId)
+  const handleEditClick = async (stateId) => {
+    console.log("fetched role id: ", stateId);
+    setEditingRole(stateId);
+    try {
+      const res = await axios.post('http://localhost:8080/role/editRole', { roleId: roleId }, { withCredentials: true });
+      console.log("Exisiting data: ", res.data.data.stateName);
+      setExistingData(res.data.data.stateName);
+    } catch (error) {
+      console.error('Error fetching role data:', error);
     }
-  }
+  };
 
-  const handleEditClick = (stateId) => {
-    if(onEditState) {
-      onEditUser(stateId);
+  const handleCancel = () => {
+    setEditingRole(null);
+    setExistingData(null);
+  };
+
+  const handleSave = async (updatedRole) => {
+    console.log("Role id: ", editingRole);
+    try {
+      const res = await axios.post('http://localhost:8080/role/updateRole', { roleId: editingRole, roleName: updatedRole}, { withCredentials: true });
+      console.log("Updated role: ", res.data);
+      setEditingRole(null);
+      setExistingData(null);
+      onRefresh();
+    } catch (error) {
+      console.error('Error updating role:', error);
     }
-  }
+  };
+
+  const handleDeleteClick = async (roleId) => {
+    try {
+      const res = await axios.post('http://localhost:8080/role/deleteRole', { roleId: roleId }, { withCredentials: true });
+      console.log('Delete role:', res);
+      onRefresh();
+    } catch (err) {
+      console.error('Error deleting role:', err);
+    }
+  };
   
   return (
     <Card>

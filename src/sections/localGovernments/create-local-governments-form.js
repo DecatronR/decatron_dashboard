@@ -1,14 +1,18 @@
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Link, Stack, TextField, Typography, Select, MenuItem } from '@mui/material';
+import { Box, Button, Stack, TextField, Typography, Select, MenuItem } from '@mui/material';
 import axios from 'axios';
 
 const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
+  const [states, setStates] = useState([]);
 
   const formik = useFormik({
     initialValues: {
       localGovernment: '',
+      state: '',
+      stateId: '',
       submit: null
     },
     validationSchema: Yup.object({
@@ -16,42 +20,74 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
         .string()
         .max(255)
         .required("field can't be empty"),
+      state: Yup
+        .string()
+        .required("Please select a state"),
     }),
 
     onSubmit: async (values, helpers) => {
       console.log("Create button clicked");
       const localGovernmentData = {
-         stateId: "6638c2ea07655b777b920fe5", // fetch stateId and pass it here
-          lga: values.localGovernment
-      }
-        const createLocalGovernmentConfig = {
+        stateId: values.stateId,
+        lga: values.localGovernment
+      };
+      const createLocalGovernmentConfig = {
         method: 'post',
         maxBodyLength: Infinity,
-          url: 'http://localhost:8080/lga/createLGA',
-          headers: { },
-          data : localGovernmentData,
-          withCredentials: true,
-        }
+        url: 'http://localhost:8080/lga/createLGA',
+        headers: {},
+        data: localGovernmentData,
+        withCredentials: true,
+      };
 
-        try {
-          const res = await axios(createLocalGovernmentConfig);
-          console.log("Succesfully created new property types: ", res);
-        } catch(err) {
-          console.log("Issue creating new LGA type: ", err);
-          helpers.setStatus({ success: false });
-          helpers.setErrors({ submit: err.message });
-          helpers.setSubmitting(false); 
-        }
+      try {
+        const res = await axios(createLocalGovernmentConfig);
+        console.log("Successfully created new LGA: ", res);
+        onLocalGovernmentCreated();
+        helpers.setStatus({ success: true });
+      } catch (err) {
+        console.log("Issue creating new LGA: ", err);
+        helpers.setStatus({ success: false });
+        helpers.setErrors({ submit: err.message });
+        helpers.setSubmitting(false);
+      }
     }
   });
 
+  const handleFetchStates = async () => {
+    const fetchStatesConfig = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:8080/state/fetchState',
+      headers: {},
+      withCredentials: true,
+    };
+
+    try {
+      const res = await axios(fetchStatesConfig);
+      console.log("Successfully fetched states: ", res);
+      const states = res.data;
+      console.log("States: ", states);
+      setStates(states);
+    } catch (err) {
+      console.log("Issue fetching states: ", err);
+    }
+  };
+
+  useEffect(() => {
+    handleFetchStates();
+  }, []);
+
+  const handleStateChange = (event) => {
+    const selectedState = states.find(state => state._id === event.target.value);
+    formik.setFieldValue('state', selectedState.state);
+    formik.setFieldValue('stateId', selectedState._id);
+  };
 
   return (
     <>
       <Head>
-        <title>
-          Create New LGA
-        </title>
+        <title>Create New LGA</title>
       </Head>
       <Box
         sx={{
@@ -70,18 +106,10 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
           }}
         >
           <div>
-            <Stack
-              spacing={1}
-              sx={{ mb: 3 }}
-            >
-              <Typography variant="h4">
-                Create New LGA
-              </Typography>
+            <Stack spacing={1} sx={{ mb: 3 }}>
+              <Typography variant="h4">Create New LGA</Typography>
             </Stack>
-            <form
-              noValidate
-              onSubmit={formik.handleSubmit}
-            >
+            <form noValidate onSubmit={formik.handleSubmit}>
               <Stack spacing={3}>
                 <TextField
                   error={!!(formik.touched.localGovernment && formik.errors.localGovernment)}
@@ -94,6 +122,26 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
                   type="text"
                   value={formik.values.localGovernment}
                 />
+                <Select
+                  error={!!(formik.touched.state && formik.errors.state)}
+                  fullWidth
+                  helperText={formik.touched.state && formik.errors.state}
+                  label="State"
+                  name="state"
+                  onBlur={formik.handleBlur}
+                  onChange={handleStateChange}
+                  value={formik.values.stateId}
+                  displayEmpty
+                >
+                  <MenuItem value="" disabled>
+                  Select State
+                  </MenuItem>
+                  {states.map((state) => (
+                    <MenuItem key={state._id} value={state._id}>
+                      {state.state}
+                    </MenuItem>
+                  ))}
+                </Select>
               </Stack>
               {formik.errors.submit && (
                 <Typography

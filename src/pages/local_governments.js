@@ -146,8 +146,7 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            {isFormOpen && <CreateLocalGovernmentsForm />} 
-            {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
+            {isFormOpen && <CreateLocalGovernmentsForm onLocalGovernmentCreated={handleLocalGovernmentsFetched} />} 
             <LocalGovernmentsSearch />
             <LocalGovernmentsTable
               count={localGovernmentsData.length}
