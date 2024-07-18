@@ -61,20 +61,20 @@ const Page = () => {
     setIsFormOpen(!isFormOpen);
   }
 
-//   const fetchRoles = async () => {
-//     try {
-//       const response = await axios.get('http://localhost:8080/users/getusers', { withCredentials: true });
-//       console.log("User data: ",response.data);
-//       setUsersData(response.data);
-//     } catch (err) {
-//       console.error("Error fetching users: ", err);
-//     }
-//   };
+  const fetchLocalGovernments = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/lga/fetchLGA', { withCredentials: true });
+      console.log("LGAs data: ",response.data);
+      setLocalGovernmentsData(response.data);
+    } catch (err) {
+      console.error("Error fetching LGAs: ", err);
+    }
+  };
 
 
-  // useEffect(() => {
-  //   fetchRoles();
-  // }, []);
+  useEffect(() => {
+    fetchLocalGovernments();
+  }, []);
 
   const handleLocalGovernmentsFetched = () => {
     fetchLocalGovernments();

@@ -128,26 +128,22 @@ export const LocalGovernmentsTable = (props) => {
                         spacing={2}
                       >
                         <Avatar src={localGovernment.avatar}>
-                          {getInitials(localGovernment.name)}
+                          {getInitials(localGovernment.lga)}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {localGovernment.name}
+                          {localGovernment.lga}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      Edit
-                    </TableCell>
-                    <TableCell>
-                      Delete
-                    </TableCell>
-                    <TableCell>
-                      {/* the user id is initialized with an underscore exactly this way at the backend */}
-                      <IconButton onClick={() => handleEditClick(localGovernment._id)}>
+                        {/* the user id is initialized with an underscore exactly this way at the backend */}
+                    <IconButton onClick={() => handleEditClick(localGovernment._id)}>
                         <SvgIcon fontSize="small">
                           <PencilIcon />
                         </SvgIcon>
                       </IconButton>
+                    </TableCell>
+                    <TableCell>
                       {/* the user id is initialized with an underscore exactly this way at the backend */}
                       <IconButton onClick={() => handleDeleteClick(localGovernment._id)}>
                         <SvgIcon fontSize="small">
