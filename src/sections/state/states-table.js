@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import {
@@ -21,25 +22,25 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
+import EditStates from './edit-states';
 
 export const StatesTable = (props) => {
   const {
     count = 0,
     items = [],
+    onRefresh,
     onDeselectAll,
     onDeselectOne,
     onPageChange = () => {},
     onRowsPerPageChange,
     onSelectAll,
     onSelectOne,
-    onEditState,
-    onDeleteState,
     page = 0,
     rowsPerPage = 0,
     selected = []
   } = props;
 
-  const [editingRole, setEditingRole] = useState(null);
+  const [editingState, setEditingState] = useState(null);
   const [existingData, setExistingData] = useState(null);
 
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
@@ -50,39 +51,39 @@ export const StatesTable = (props) => {
   };
 
   const handleEditClick = async (stateId) => {
-    console.log("fetched role id: ", stateId);
-    setEditingRole(stateId);
+    console.log("fetched state id: ", stateId);
+    setEditingState(stateId);
     try {
-      const res = await axios.post('http://localhost:8080/role/editRole', { roleId: roleId }, { withCredentials: true });
-      console.log("Exisiting data: ", res.data.data.stateName);
-      setExistingData(res.data.data.stateName);
+      const res = await axios.post('http://localhost:8080/state/editState', { id: stateId }, { withCredentials: true });
+      console.log("Exisiting data: ", res.data.data.state);
+      setExistingData(res.data.data.state);
     } catch (error) {
-      console.error('Error fetching role data:', error);
+      console.error('Error fetching state data:', error);
     }
   };
 
   const handleCancel = () => {
-    setEditingRole(null);
-    setExistingData(null);
+    setEditingState(null);
+    setExistingState(null);
   };
 
-  const handleSave = async (updatedRole) => {
-    console.log("Role id: ", editingRole);
+  const handleSave = async (updatedState) => {
+    console.log("State id: ", editingState);
     try {
-      const res = await axios.post('http://localhost:8080/role/updateRole', { roleId: editingRole, roleName: updatedRole}, { withCredentials: true });
-      console.log("Updated role: ", res.data);
-      setEditingRole(null);
+      const res = await axios.post('http://localhost:8080/state/updateState', { id: editingState, state: updatedState}, { withCredentials: true });
+      console.log("Updated state:  ", res.data);
+      setEditingState(null);
       setExistingData(null);
       onRefresh();
     } catch (error) {
-      console.error('Error updating role:', error);
+      console.error('Error updating state:', error);
     }
   };
 
-  const handleDeleteClick = async (roleId) => {
+  const handleDeleteClick = async (stateId) => {
     try {
-      const res = await axios.post('http://localhost:8080/role/deleteRole', { roleId: roleId }, { withCredentials: true });
-      console.log('Delete role:', res);
+      const res = await axios.post('http://localhost:8080/state/deleteState', { id: stateId }, { withCredentials: true });
+      console.log('Delete state:', res);
       onRefresh();
     } catch (err) {
       console.error('Error deleting role:', err);
@@ -131,7 +132,7 @@ export const StatesTable = (props) => {
                 return (
                   <TableRow
                     hover
-                    key={state.id}
+                    key={state._id}
                     selected={isItemSelected}
                   >
                     <TableCell padding="checkbox">
@@ -139,9 +140,9 @@ export const StatesTable = (props) => {
                         checked={isItemSelected}
                         onChange={(event) => {
                           if (event.target.checked) {
-                            onSelectOne?.(state.id);
+                            onSelectOne?.(state._id);
                           } else {
-                            onDeselectOne?.(state.id);
+                            onDeselectOne?.(state._id);
                           }
                         }}
                         inputProps={{ 'aria-labelledby': labelId }}
@@ -157,27 +158,28 @@ export const StatesTable = (props) => {
                         spacing={2}
                       >
                         <Avatar src={state.avatar}>
-                          {getInitials(state.name)}
+                          {getInitials(state.state)}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {state.name}
+                          {state.state}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      Edit
-                    </TableCell>
-                    <TableCell>
-                      Delete
-                    </TableCell>
-                    <TableCell>
-                      {/* the user id is initialized with an underscore exactly this way at the backend */}
-                      <IconButton onClick={() => handleEditClick(state._id)}>
+                    <IconButton onClick={() => handleEditClick(state._id)}>
                         <SvgIcon fontSize="small">
                           <PencilIcon />
                         </SvgIcon>
                       </IconButton>
-                      {/* the user id is initialized with an underscore exactly this way at the backend */}
+                      {editingState === state._id && existingData && (
+                        <EditStates
+                          initialData={existingData}
+                          onSave={handleSave}
+                          onCancel={handleCancel}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>
                       <IconButton onClick={() => handleDeleteClick(state._id)}>
                         <SvgIcon fontSize="small">
                           <TrashIcon />

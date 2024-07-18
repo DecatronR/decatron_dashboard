@@ -35,6 +35,7 @@ const CreateStatesForm = ({ onStateCreated }) => {
       try {
         const res = await axios(createStateConfig);
         console.log("Successfully created new state: ", res);
+        onStateCreated();
       } catch(err) {
         console.log("Issue creating new state: ", err);
         helpers.setStatus({ success: false });

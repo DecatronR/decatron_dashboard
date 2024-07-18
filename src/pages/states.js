@@ -61,40 +61,25 @@ const Page = () => {
     setIsFormOpen(!isFormOpen);
   }
 
-//   const fetchRoles = async () => {
-//     try {
-//       const response = await axios.get('http://localhost:8080/users/getusers', { withCredentials: true });
-//       console.log("User data: ",response.data);
-//       setUsersData(response.data);
-//     } catch (err) {
-//       console.error("Error fetching users: ", err);
-//     }
-//   };
+  const fetchStates = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/state/fetchState', { withCredentials: true });
+      console.log("States data: ",response.data);
+      setStatesData(response.data);
+    } catch (err) {
+      console.error("Error fetching states: ", err);
+    }
+  };
 
 
-  // useEffect(() => {
-  //   fetchRoles();
-  // }, []);
+  useEffect(() => {
+    fetchStates();
+  }, []);
 
   const handleStateFetched = () => {
     fetchStates();
     setIsFormOpen(false);
   }
-
-  const handleEditState = async (stateId) => {
-    router.push(`/edit-state/${stateId}`);
-  };
-
-  const handleDeleteState = async (stateId) => {
-    try {
-      console.log("State Id ready: ", stateId);
-      const res = await axios.post('http://localhost:8080/users/delete', { id: userId }, { withCredentials: true });
-      console.log("Delete states: ", res);
-      fetchUsers();
-    } catch(err) {
-      console.error("Error deleting state: ", err);
-    }
-  };
 
 
   return (
@@ -147,14 +132,13 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            {isFormOpen && <CreateStatesForm />} 
+            {isFormOpen && <CreateStatesForm onStateCreated={handleStateFetched}/>} 
             {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
             <StatesSearch />
             <StatesTable
               count={statesData.length}
               items={states}
-              onEditState={handleEditState}
-              onDeleteState={handleDeleteState}
+              onRefresh={handleStateFetched}
               onDeselectAll={statesSelection.handleDeselectAll}
               onDeselectOne={statesSelection.handleDeselectOne}
               onPageChange={handlePageChange}
