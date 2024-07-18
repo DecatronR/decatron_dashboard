@@ -3,17 +3,17 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
 
-const EditStates = ({ initialData, onSave, onCancel }) => {
+const EditLocalGovernments = ({ initialData, onSave, onCancel }) => {
   const formik = useFormik({
     initialValues: {
-      state: initialData || '',
+      localGovernment: initialData || '',
       submit: null,
     },
     validationSchema: Yup.object({
-      state: Yup.string().max(255).required("field can't be empty"),
+      localGovernment: Yup.string().max(255).required("field can't be empty"),
     }),
     onSubmit: (values, helpers) => {
-      onSave(values.state);
+      onSave(values.localGovernment);
       helpers.setSubmitting(false);
     },
   });
@@ -28,20 +28,20 @@ const EditStates = ({ initialData, onSave, onCancel }) => {
       }}
     >
       <Stack spacing={1} sx={{ mb: 2 }}>
-        <Typography variant="h6">Edit State</Typography>
+        <Typography variant="h6">Edit Local Government</Typography>
       </Stack>
       <form noValidate onSubmit={formik.handleSubmit}>
         <Stack spacing={2}>
           <TextField
-            error={!!(formik.touched.state && formik.errors.state)}
+            error={!!(formik.touched.localGovernment && formik.errors.localGovernment)}
             fullWidth
-            helperText={formik.touched.state && formik.errors.state}
-            label="State"
-            name="state"
+            helperText={formik.touched.localGovernment && formik.errors.localGovernment}
+            label="Local Government"
+            name="localGovernment"
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
             type="text"
-            value={formik.values.state}
+            value={formik.values.localGovernment}
           />
           {formik.errors.submit && (
             <Typography color="error" sx={{ mt: 2 }} variant="body2">
@@ -62,4 +62,4 @@ const EditStates = ({ initialData, onSave, onCancel }) => {
   );
 };
 
-export default EditStates;
+export default EditLocalGovernments;

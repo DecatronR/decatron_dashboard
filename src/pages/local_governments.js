@@ -151,6 +151,7 @@ const Page = () => {
             <LocalGovernmentsTable
               count={localGovernmentsData.length}
               items={localGovernments}
+              onRefresh={handleLocalGovernmentsFetched}
               onEditLocalGovernment={handleEditLocalGovernment}
               onDeleteLocalGovernment={handleDeleteLocalGovernment}
               onDeselectAll={localGovernmentsSelection.handleDeselectAll}
