@@ -35,7 +35,13 @@ const CreateListing = () => {
       } catch (err) {
         console.error('Validation error:', err);
       }
-  };
+    };
+    
+    const handleFileChange = (event) => {
+      const files = event.target.files;
+      const photosArray = Array.from(files).map(file => ({ path: URL.createObjectURL(file) }));
+      formik.setFieldValue('photos', photosArray);
+    };
 
   const fetchData = useCallback(async (url, setter) => {
     try {
@@ -155,8 +161,7 @@ const CreateListing = () => {
             Price: values.price,
             virtualTour: values.virtualTour,
             video: values.video,
-            photo: values.photos.map(photo => ({ path: photo.path }))
-               
+            photo: values.photos.map(photo => ({ path: photo.path }))     
           }
 
             const propertyListingConfig = {
@@ -171,7 +176,7 @@ const CreateListing = () => {
         try {
           console.log("property listing data: ", propertyListingData);
           const res = await axios(propertyListingConfig);
-          console.log("Succesfully created new user: ", res);
+          console.log("Succesfully listed new property: ", res);
           onUserCreated();
           if(res.statusText === "OK") {
             helpers.setStatus({ success: true });
@@ -189,16 +194,28 @@ const CreateListing = () => {
     const CreateListingFormContent = (step) => {
         switch (step) {
             case 0:
-                return <BasicInformation 
-                          formik={formik} 
-                          propertyTypes={propertyTypes}
-                          listingTypes={listingTypes}
-                          states={states}
-                        />;
+                return (
+                  <BasicInformation 
+                      formik={formik} 
+                      propertyTypes={propertyTypes}
+                      listingTypes={listingTypes}
+                      states={states}
+                    />
+                );  
+                  
             case 1:
-                return <PropertyDetails formik={formik} />;
+                return (
+                  <PropertyDetails formik={formik} />
+                );
+
             case 2:
-                return <PropertyMedia formik={formik} />;
+                return (
+                  <PropertyMedia 
+                    formik={formik}
+                    handleFileChange={handleFileChange}  
+                  />
+                );
+
             default:
                 return <div>404: Not Found</div>;
         }

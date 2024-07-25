@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 const PropertyMedia = (props) => {
-  const { formik, handleNextBtn, handleBackBtn } = props;
+  const { formik, handleFileChange} = props;
 
   const handlePriceChange = (event) => {
     const { name, value } = event.target;
@@ -50,7 +50,7 @@ const PropertyMedia = (props) => {
                   label="Photos"
                   name="photos"
                   onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
+                  onChange={handleFileChange}
                   type="file"
                   inputProps={{ multiple: true }}
                   style={{ cursor: 'pointer' }}
