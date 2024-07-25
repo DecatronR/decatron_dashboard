@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect} from 'react';
 import {
   Box,
   Button,
@@ -12,10 +12,10 @@ import {
   Select,
   MenuItem
 } from '@mui/material';
-import { propertyListingTypes, propertyUsageTypes, propertyTypes, propertySubTypes, propertyCondtions, states, neighbourhoods } from 'src/components/database/create-listing';
+import { propertyUsageTypes, propertySubTypes, propertyCondtions } from 'src/components/database/create-listing';
 
 const BasicInformation = (props) => {
-  const { formik, handleNextBtn, handleBackBtn } = props;
+  const { formik, propertyTypes, listingTypes, states } = props;
 
   return (
     <form
@@ -57,19 +57,18 @@ const BasicInformation = (props) => {
                   error={!!(formik.touched.propertyListingType && formik.errors.propertyListingType)}
                   fullWidth
                   helperText={formik.touched.propertyListingType && formik.errors.propertyListingType}
-                  label="Property Listing Type"
                   name="propertyListingType"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                   value={formik.values.propertyListingType}
                   displayEmpty
-                  >
-                    <MenuItem disabled value="">
-                      Select Listing Type
-                    </MenuItem>
-                  {propertyListingTypes.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                >
+                  <MenuItem disabled value="">
+                    Select Listing Type
+                  </MenuItem>
+                  {listingTypes.map((option) => (
+                    <MenuItem key={option._id} value={option.slug}>
+                      {option.listingType}
                     </MenuItem>
                   ))}
                 </Select>
@@ -104,23 +103,22 @@ const BasicInformation = (props) => {
                 xs={12}
                 md={6}
               >
-                 <Select
+                <Select
                   error={!!(formik.touched.propertyType && formik.errors.propertyType)}
                   fullWidth
                   helperText={formik.touched.propertyType && formik.errors.propertyType}
-                  label="Property Type"
                   name="propertyType"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                   value={formik.values.propertyType}
                   displayEmpty
-                  >
-                    <MenuItem disabled value="">
-                      Select Property Type
-                    </MenuItem>
+                >
+                  <MenuItem disabled value="">
+                    Select Property Type
+                  </MenuItem>
                   {propertyTypes.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                    <MenuItem key={option._id} value={option.slug}>
+                      {option.propertyType}
                     </MenuItem>
                   ))}
                 </Select>
@@ -179,23 +177,22 @@ const BasicInformation = (props) => {
                 xs={12}
                 md={6}
               >
-              <Select
+               <Select
                   error={!!(formik.touched.state && formik.errors.state)}
                   fullWidth
                   helperText={formik.touched.state && formik.errors.state}
-                  label="State"
                   name="state"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                   value={formik.values.state}
                   displayEmpty
-                  >
-                    <MenuItem disabled value="">
-                      Select State
-                    </MenuItem>
+                >
+                  <MenuItem disabled value="">
+                    Select State
+                  </MenuItem>
                   {states.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                    <MenuItem key={option._id} value={option.slug}>
+                      {option.state}
                     </MenuItem>
                   ))}
                 </Select>
@@ -204,7 +201,7 @@ const BasicInformation = (props) => {
                 xs={12}
                 md={6}
               >
-              <Select
+               <TextField
                   error={!!(formik.touched.neighbourhood && formik.errors.neighbourhood)}
                   fullWidth
                   helperText={formik.touched.neighbourhood && formik.errors.neighbourhood}
@@ -212,18 +209,9 @@ const BasicInformation = (props) => {
                   name="neighbourhood"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
+                  type="text"
                   value={formik.values.neighbourhood}
-                  displayEmpty
-                  >
-                    <MenuItem disabled value="">
-                      Select Neighbourhood
-                    </MenuItem>
-                  {neighbourhoods.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
+                /> 
               </Grid>
               <Grid
                 xs={12}

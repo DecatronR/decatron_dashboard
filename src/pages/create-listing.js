@@ -1,18 +1,23 @@
 import Head from 'next/head';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid, Button, LinearProgress } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import BasicInformation from 'src/sections/createListingForm/basic-information';
 import PropertyDetails from 'src/sections/createListingForm/property-details';
 import PropertyMedia from 'src/sections/createListingForm/property-media';
-import { legalDocuments } from 'src/components/database/create-listing';
+
 
 const steps = ['Basic Information', 'Property Details', 'Property Media'];
 const CreateListing = () => {
     const [activeStep, setActiveStep] = useState(0);
     const [completedSteps, setCompletedSteps] = useState(0);
+
+    const [propertyTypes, setPropertyTypes] = useState([]);
+    const [listingTypes, setListingTypes] = useState([]);
+    const [states, setStates] = useState([]);
 
     const handleBackBtn = () => {
         setActiveStep((prevStep) => prevStep - 1);
@@ -22,104 +27,156 @@ const CreateListing = () => {
       try {
           await formik.validateForm();
           if (activeStep === steps.length - 1) {
-              formik.handleSubmit(); // Trigger form submission if last step
+              formik.handleSubmit(); 
           } else {
               setCompletedSteps((prev) => prev + 1);
               setActiveStep((prevStep) => prevStep + 1);
           }
-      } catch (error) {
-          console.error('Validation error:', error);
-          helpers.setStatus({ success: false });
-          helpers.setErrors({ submit: err.message });
-          helpers.setSubmitting(false);
+      } catch (err) {
+        console.error('Validation error:', err);
       }
   };
+
+  const fetchData = useCallback(async (url, setter) => {
+    try {
+      const res = await axios.get(url, { withCredentials: true });
+      console.log(`Successfully fetched data from ${url}: `, res);
+      const data = res.data;
+      console.log("Data: ", data);
+      setter(data);
+    } catch(err) {
+      console.log(`Issue fetching data from ${url}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      await Promise.all([
+        fetchData("http://localhost:8080/propertyType/fetchPropertyType", setPropertyTypes),
+        fetchData("http://localhost:8080/listingType/fetchListingType", setListingTypes),
+        fetchData("http://localhost:8080/state/fetchState", setStates)
+      ]);
+    };
+
+    fetchAllData();
+  }, [fetchData]);
   
 
     const formik = useFormik({
         initialValues: {
-            propertyTitle: '',
-            propertyListingType: '',
-            propertyUsageType: '',
-            propertyType: '',
-            propertySubType: '',
-            state: '',
-            neighbourhood: '',
-            size: '',
-            propertyCondition: '',
-            livingRooms: '',
-            bedrooms: '',
-            bathrooms: '',
-            kitchens: '',
-            parkingSpaces: '',
-            amenities: '',
-            price: '',
-            legalDocuments: '',
-            photos: '',
-            virtualTour: '',
-            video: '',
+          propertyTitle: '',
+          propertyListingType: '',
+          propertyUsageType: '',
+          propertyType: '',
+          propertySubType: '',
+          state: '',
+          neighbourhood: '',
+          size: '',
+          propertyCondition: '',
+          propertyDescription: '',
+          livingRooms: '',
+          bedrooms: '',
+          kitchens: '',
+          parkingSpaces: '',
+          price: '',
+          photos: [],
+          virtualTour: '',
+          video: '',
         },
-        validationSchema: Yup.object({
+        validationSchema: Yup
+          .object({
           propertyTitle: Yup
-            .string()
-            .required('Property title is required'),
-          propertyListingType: Yup
-            .string()
-            .required('Property listing type is required'),
-          propertyUsageType: Yup
-            .string()
-            .required('Property usage type is required'),
-          propertyType: Yup
-            .string()
-            .required('Property type is required'),
-          propertySubType: Yup
-            .string(),
-          state: Yup
-            .string()
-            .required('State is required'),
-          neighbourhood: Yup
-            .string()
-            .required('Neighbourhood is required'),
-          size: Yup
-            .string(),
-          propertyCondition: Yup
-            .string(),
-          livingRooms: Yup
-            .number(),
-          bedrooms: Yup
-            .number(),
-          bathrooms: Yup
-            .number(),
-          kitchens: Yup
-            .number(),
-          parkingSpaces: Yup
-            .number(),
-          price: Yup
-            .number()
-            .required('Price is required')
-            .positive('Price must be positive'),
-          legalDocuments: Yup
-            .string(),
-          photos:Yup
-            .mixed()
-            .required('Image is required')
-            .test('fileType', 'Only JPEG, PNG, and JPG images are allowed', (value) => {
-              if (!value) return false;
-              return (
-                value.type.startsWith('image/') &&
-                ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type)
-              );
-            }),
-          virtualTour: Yup.
-            string()
-            .url('Invalid URL format'),
-          video: Yup
-            .string()
-            .url('Invalid URL format'),
+          .string()
+          .required('Property title is required'),
+        propertyListingType: Yup
+          .string()
+          .required('Property listing type is required'),
+        propertyUsageType: Yup
+          .string()
+          .required('Property usage type is required'),
+        propertyType: Yup
+          .string()
+          .required('Property type is required'),
+        propertySubType: Yup
+          .string(),
+        state: Yup
+          .string()
+          .required('State is required'),
+        neighbourhood: Yup
+          .string()
+          .required('Neighbourhood is required'),
+        size: Yup
+          .string(),
+        propertyCondition: Yup
+          .string(),
+        propertyDescription: Yup
+          .string(),
+        livingRooms: Yup
+          .number(),
+        bedrooms: Yup
+          .number(),
+        kitchens: Yup
+          .number(),
+        parkingSpaces: Yup
+          .number(),
+        price: Yup
+          .number()
+          .required('Price is required')
+          .positive('Price must be positive'),
+        photos: Yup
+          .array()
+          .of(Yup.object()
+          .shape({
+            path: Yup.string().required('Photo path is required')
+        })),
+        virtualTour: Yup
+          .string()
+          .url('Invalid URL format'),
+        video: Yup
+          .string()
+          .url('Invalid URL format'),
         }),
         onSubmit: async (values, helpers) => {
-          try {
-          
+          const propertyListingData = {
+            title: values.propertyTitle,
+            listingType: values.propertyListingType,
+            usageType: values.propertyUsageType,
+            propertyType: values.propertyType,
+            propertySubType: values.propertySubType,
+            propertyCondition: values.propertyCondition,
+            state: values.state,
+            neighbourhood: values.neighbourhood,
+            size: values.size,
+            propertyDetails: values.propertyDescription,
+            NoOfLivingRooms: values.livingRooms,
+            NoOfBedRooms: values.bedrooms,
+            NoOfKitchens: values.kitchens,
+            NoOfParkingSpace: values.parkingSpaces,
+            Price: values.price,
+            virtualTour: values.virtualTour,
+            video: values.video,
+            photo: values.photos.map(photo => ({ path: photo.path }))
+               
+          }
+
+            const propertyListingConfig = {
+              method: 'post',
+              maxBodyLength: Infinity,
+              url: 'http://localhost:8080/propertyListing/createPropertyListing',
+              headers: { },
+              data : propertyListingData,
+              withCredentials: true
+            }
+            
+        try {
+          console.log("property listing data: ", propertyListingData);
+          const res = await axios(propertyListingConfig);
+          console.log("Succesfully created new user: ", res);
+          onUserCreated();
+          if(res.statusText === "OK") {
+            helpers.setStatus({ success: true });
+            formik.resetForm();
+          }
         } catch (error) {
             console.error('Validation error:', error);
             helpers.setStatus({ success: false });
@@ -132,7 +189,12 @@ const CreateListing = () => {
     const CreateListingFormContent = (step) => {
         switch (step) {
             case 0:
-                return <BasicInformation formik={formik} />;
+                return <BasicInformation 
+                          formik={formik} 
+                          propertyTypes={propertyTypes}
+                          listingTypes={listingTypes}
+                          states={states}
+                        />;
             case 1:
                 return <PropertyDetails formik={formik} />;
             case 2:
