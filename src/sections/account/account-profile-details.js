@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Box,
   Button,
@@ -11,34 +12,34 @@ import {
   Unstable_Grid2 as Grid
 } from '@mui/material';
 
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'new-york',
-    label: 'New York'
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco'
-  },
-  {
-    value: 'los-angeles',
-    label: 'Los Angeles'
-  }
-];
+export const AccountProfileDetails = (props) => {
+  const { user } = props;
 
-export const AccountProfileDetails = () => {
   const [values, setValues] = useState({
-    firstName: 'Anika',
-    lastName: 'Visser',
-    email: 'demo@decatron.io',
+    firstName: '',
+    lastName: '',
+    email: '',
+    role: '', 
+    id: '',
     phone: '',
-    state: 'los-angeles',
-    country: 'USA'
   });
+
+  useEffect(() => {
+    if (user && Object.keys(user).length > 0) {
+      setValues({
+        firstName: user.name?.split(' ')[0] || '',
+        lastName: user.name?.split(' ')[1] || '',
+        email: user.email || '',
+        role: user.role  || '',
+        id: user.id || '',
+        phone: user.phone || ''
+      });
+    }
+  }, [user]);
+
+  const capitalizeRole = (role) => {
+    return role ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() : '';
+  };
 
   const handleChange = useCallback(
     (event) => {
@@ -50,11 +51,22 @@ export const AccountProfileDetails = () => {
     []
   );
 
-  const handleSubmit = useCallback(
-    (event) => {
+  const handleSubmit = useCallback( async (event) => {
       event.preventDefault();
+      const updatedUser = {
+        ...values,
+        name: `${values.firstName} ${values.lastName}`,
+        role: values.role.toLowerCase(),
+      };
+
+      try {
+        console.log('Updating user:', updatedUser);
+        await axios.post('http://localhost:8080/users/update', updatedUser, { withCredentials: true });
+      } catch (err) {
+        console.error('Error updating user:', err);
+      }
     },
-    []
+    [values]
   );
 
   return (
@@ -120,56 +132,21 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  label="Phone Number"
-                  name="phone"
+                  label="Role"
+                  name="role"
                   onChange={handleChange}
-                  type="number"
-                  value={values.phone}
+                  value={capitalizeRole(values.role)}
                 />
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Country"
-                  name="country"
-                  onChange={handleChange}
-                  required
-                  value={values.country}
-                />
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Select State"
-                  name="state"
-                  onChange={handleChange}
-                  required
-                  select
-                  SelectProps={{ native: true }}
-                  value={values.state}
-                >
-                  {states.map((option) => (
-                    <option
-                      key={option.value}
-                      value={option.value}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </TextField>
               </Grid>
             </Grid>
           </Box>
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained">
+          <Button
+            variant="contained"
+            type="submit"
+          >
             Save details
           </Button>
         </CardActions>
