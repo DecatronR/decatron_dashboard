@@ -1,10 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { subDays, subHours } from 'date-fns';
 import axios from 'axios';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
@@ -34,8 +31,8 @@ const useStatesIds = (states) => {
 };
 
 const Page = () => {
-  const router = useRouter();
   const [statesData, setStatesData] = useState([]);
+  const [filteredStates, setFilteredStates] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const states = useStates(statesData, page, rowsPerPage);
@@ -66,6 +63,7 @@ const Page = () => {
       const response = await axios.get('http://localhost:8080/state/fetchState', { withCredentials: true });
       console.log("States data: ",response.data);
       setStatesData(response.data);
+      setFilteredStates(response.data);
     } catch (err) {
       console.error("Error fetching states: ", err);
     }
@@ -81,6 +79,9 @@ const Page = () => {
     setIsFormOpen(false);
   }
 
+  const handleSearch = (filteredStates) => {
+    setFilteredStates(filteredStates);
+  };
 
   return (
     <>
@@ -134,10 +135,10 @@ const Page = () => {
             </Stack>
             {isFormOpen && <CreateStatesForm onStateCreated={handleStateFetched}/>} 
             {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
-            <StatesSearch />
+            <StatesSearch states={states} onSearch={handleSearch} />
             <StatesTable
-              count={statesData.length}
-              items={states}
+              count={filteredStates.length}
+              items={filteredStates}
               onRefresh={handleStateFetched}
               onDeselectAll={statesSelection.handleDeselectAll}
               onDeselectOne={statesSelection.handleDeselectOne}

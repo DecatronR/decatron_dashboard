@@ -1,10 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { subDays, subHours } from 'date-fns';
 import axios from 'axios';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
@@ -36,6 +33,7 @@ const useLocalGovernmentsIds = (localGovernments) => {
 const Page = () => {
   const router = useRouter();
   const [localGovernmentsData, setLocalGovernmentsData] = useState([]);
+  const [filteredLocalGovernments, setFilteredLocalGovernments] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const localGovernments = useLocalGovernmenmts(localGovernmentsData, page, rowsPerPage);
@@ -66,6 +64,7 @@ const Page = () => {
       const response = await axios.get('http://localhost:8080/lga/fetchLGA', { withCredentials: true });
       console.log("LGAs data: ",response.data);
       setLocalGovernmentsData(response.data);
+      setFilteredLocalGovernments(response.data);
     } catch (err) {
       console.error("Error fetching LGAs: ", err);
     }
@@ -94,6 +93,10 @@ const Page = () => {
     } catch(err) {
       console.error("Error deleting local governments: ", err);
     }
+  };
+
+  const handleSearch = (filteredLocalGovernments) => {
+    setFilteredLocalGovernments(filteredLocalGovernments);
   };
 
   return (
@@ -147,10 +150,10 @@ const Page = () => {
               </div>
             </Stack>
             {isFormOpen && <CreateLocalGovernmentsForm onLocalGovernmentCreated={handleLocalGovernmentsFetched} />} 
-            <LocalGovernmentsSearch />
+            <LocalGovernmentsSearch localGovernments={localGovernments} onSearch={handleSearch} />
             <LocalGovernmentsTable
-              count={localGovernmentsData.length}
-              items={localGovernments}
+              count={filteredLocalGovernments.length}
+              items={filteredLocalGovernments}
               onRefresh={handleLocalGovernmentsFetched}
               onEditLocalGovernment={handleEditLocalGovernment}
               onDeleteLocalGovernment={handleDeleteLocalGovernment}
