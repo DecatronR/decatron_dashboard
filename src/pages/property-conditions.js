@@ -1,19 +1,17 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { subDays, subHours } from 'date-fns';
 import axios from 'axios';
 import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { PropertyTypesTable } from 'src/sections/propertyTypes/property-types-table';
-import { PropertyTypesSearch } from 'src/sections/propertyTypes/property-types-search';
+import PropertyConditionsTable from 'src/sections/propertyConditions/property-conditions-table';
+import { PropertyConditionsSearch } from 'src/sections/propertyConditions/property-conditions-search';
 import { applyPagination } from 'src/utils/apply-pagination';
-import CreatePropertyTypesForm from 'src/sections/propertyTypes/create-property-types-form';
+import CreatePropertyConditionsForm from 'src/sections/propertyConditions/create-property-conditions';
 
-const usePropertyUsageTypes = (data, page, rowsPerPage) => {
+const usePropertyConditions = (data, page, rowsPerPage) => {
   return useMemo(
     () => {
       return applyPagination(data, page, rowsPerPage);
@@ -22,24 +20,23 @@ const usePropertyUsageTypes = (data, page, rowsPerPage) => {
   );
 };
 
-const usePropertyUsageTypesIds = (propertyUsageTypes) => {
+const usePropertyConditionsIds = (propertyConditions) => {
   return useMemo(
     () => {
-      return propertyUsageTypes.map((propertyUsageType) => propertyUsageType.id);
+      return propertyConditions.map((propertyCondition) => propertyCondition.id);
     },
-    [propertyUsageTypes]
+    [propertyConditions]
   );
 };
 
 const Page = () => {
-
-  const [propertyUsageTypesData, setPropertyUsageTypesData] = useState([]);
-  const [filteredPropertyUsageTypes, setFilteredPropertyUsageTypes] = useState([]);
+  const [propertyConditionsData, setPropertyConditionsData] = useState([]);
+  const [filteredPropertyConditions, setFilteredPropertyConditions] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const propertyUsageTypes = usePropertyUsageTypes(propertyUsageTypesData, page, rowsPerPage);
-  const propertyUsageTypesIds = usePropertyUsageTypesIds(propertyUsageTypes);
-  const propertyUsageTypesSelection = useSelection(propertyUsageTypesIds);
+  const propertyConditions = usePropertyConditions(propertyConditionsData, page, rowsPerPage);
+  const propertyConditionsIds = usePropertyConditionsIds(propertyConditions);
+  const propertyConditionsSelection = useSelection(propertyConditionsIds);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const handlePageChange = useCallback(
@@ -60,36 +57,36 @@ const Page = () => {
     setIsFormOpen(!isFormOpen);
   }
 
-  const fetchPropertyUsageTypes = async () => {
+  const fetchPropertyConditions = async () => {
     try {
       const response = await axios.get('http://localhost:8080/propertyType/fetchPropertyType', { withCredentials: true });
-      console.log("Property usage type data: ",response.data);
-      setPropertyUsageTypesData(response.data);
-      setFilteredPropertyUsageTypes(response.data);
+      console.log("Property conditions data: ",response.data);
+      setPropertyConditionsData(response.data);
+      setFilteredPropertyConditions(response.data);
     } catch (err) {
-      console.error("Error fetching property type : ", err);
+      console.error("Error fetching property conditions : ", err);
     }
   };
 
 
   useEffect(() => {
-    fetchPropertyUsageTypes();
+    fetchPropertyConditions();
   }, []);
 
-  const handlePropertyTypeFetched = () => {
-    fetchPropertyUsageTypes();
+  const handlePropertyConditionsFetched = () => {
+    fetchPropertyTypes();
     setIsFormOpen(false);
   }
 
-  const handleSearch = (filteredPropertyUsageTypes) => {
-    setFilteredPropertyUsageTypes(filteredPropertyUsageTypes);
+  const handleSearch = (filteredPropertyTypes) => {
+    setFilteredPropertyConditions(filteredPropertyConditions);
   };
 
   return (
     <>
       <Head>
         <title>
-          Property Usage Types
+          Property Conditions
         </title>
       </Head>
       <Box
@@ -108,7 +105,7 @@ const Page = () => {
             >
               <Stack spacing={1}>
                 <Typography variant="h4">
-                  Property Usage Types
+                  Property Conditions
                 </Typography>
                 <Stack
                   alignItems="center"
@@ -131,26 +128,26 @@ const Page = () => {
                   variant="contained"
                   onClick={handleToggleForm}
                 >
-                  {!isFormOpen ? "Create Property Type" : "Close"}
+                  {!isFormOpen ? "Create Property Conditions" : "Close"}
                 </Button>
               </div>
             </Stack>
-            {isFormOpen && <CreatePropertyUsageTypesForm onPropertyUsageTypeCreated={handlePropertyUsageTypeFetched} />}
+            {isFormOpen && <CreatePropertyConditionsForm onPropertyConditionsCreated={handlePropertyConditionsFetched} />}
             {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
-            <PropertyUsageTypesSearch propertyUsageTypes={propertyUsageTypesData} onSearch={handleSearch} />
-            <PropertyUsageTypesTable
-              count={filteredPropertyUsageTypes.length}
-              items={filteredPropertyUsageTypes}
-              onRefresh={handlePropertyUsageTypeFetched}
-              onDeselectAll={propertyUsageTypesSelection.handleDeselectAll}
-              onDeselectOne={propertyUsageTypesSelection.handleDeselectOne}
+            <PropertyConditionsSearch propertyConditions={propertyConditionsData} onSearch={handleSearch} />
+            <PropertyConditionsTable
+              count={filteredPropertyConditions.length}
+              items={filteredPropertyConditions}
+              onRefresh={handlePropertyConditionsFetched}
+              onDeselectAll={propertyConditionsSelection.handleDeselectAll}
+              onDeselectOne={propertyConditionsSelection.handleDeselectOne}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
-              onSelectAll={propertyUsageTypesSelection.handleSelectAll}
-              onSelectOne={propertyUsageTypesSelection.handleSelectOne}
+              onSelectAll={propertyConditionsSelection.handleSelectAll}
+              onSelectOne={propertyConditionsSelection.handleSelectOne}
               page={page}
               rowsPerPage={rowsPerPage}
-              selected={propertyUsageTypesSelection.selected}
+              selected={propertyConditionsSelection.selected}
             />
           </Stack>
         </Container>
