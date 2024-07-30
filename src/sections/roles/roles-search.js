@@ -8,11 +8,11 @@ export const RolesSearch = (props) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const filteredUsers = roles.filter(roles =>
-      roles.roleName?.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredRoles = roles.filter(roles =>
+      roles.roleName.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    onSearch(filteredUsers);
-  }, [searchQuery, roles, onSearch]);
+    onSearch(filteredRoles);
+  }, [searchQuery]);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);

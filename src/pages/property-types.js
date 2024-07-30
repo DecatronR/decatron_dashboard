@@ -36,6 +36,7 @@ const usePropertyTypesIds = (propertyTypes) => {
 const Page = () => {
   const router = useRouter();
   const [propertyTypesData, setPropertyTypesData] = useState([]);
+  const [filteredPropertyTypes, setFilteredPropertyTypes] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const propertyTypes = usePropertyTypes(propertyTypesData, page, rowsPerPage);
@@ -66,6 +67,7 @@ const Page = () => {
       const response = await axios.get('http://localhost:8080/propertyType/fetchPropertyType', { withCredentials: true });
       console.log("Property type data: ",response.data);
       setPropertyTypesData(response.data);
+      setFilteredPropertyTypes(response.data);
     } catch (err) {
       console.error("Error fetching property type : ", err);
     }
@@ -80,6 +82,10 @@ const Page = () => {
     fetchPropertyTypes();
     setIsFormOpen(false);
   }
+
+  const handleSearch = (filteredPropertyTypes) => {
+    setFilteredPropertyTypes(filteredPropertyTypes);
+  };
 
   return (
     <>
@@ -133,10 +139,10 @@ const Page = () => {
             </Stack>
             {isFormOpen && <CreatePropertyTypesForm onPropertyTypeCreated={handlePropertyTypeFetched} />}
             {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
-            <PropertyTypesSearch />
+            <PropertyTypesSearch propertyTypes={propertyTypesData} onSearch={handleSearch} />
             <PropertyTypesTable
-              count={propertyTypesData.length}
-              items={propertyTypes}
+              count={filteredPropertyTypes.length}
+              items={filteredPropertyTypes}
               onRefresh={handlePropertyTypeFetched}
               onDeselectAll={propertyTypesSelection.handleDeselectAll}
               onDeselectOne={propertyTypesSelection.handleDeselectOne}

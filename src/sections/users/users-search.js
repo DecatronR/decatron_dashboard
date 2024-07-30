@@ -12,7 +12,7 @@ export const UsersSearch = (props) => {
       user.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     onSearch(filteredUsers);
-  }, [searchQuery, users, onSearch]);
+  }, [searchQuery]);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);

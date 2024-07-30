@@ -1,10 +1,28 @@
+import { useState, useEffect } from 'react';
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { Card, InputAdornment, OutlinedInput, SvgIcon } from '@mui/material';
 
-export const PropertyTypesSearch = () => (
-  <Card sx={{ p: 2 }}>
+export const PropertyTypesSearch = (props) => {
+  const {propertyTypes, onSearch} = props;
+  
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const filteredPropertyTypes = propertyTypes.filter(propertyTypes =>
+      propertyTypes.propertyType.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    onSearch(filteredPropertyTypes);
+  }, [searchQuery]);
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  return (
+    <Card sx={{ p: 2 }}>
     <OutlinedInput
-      defaultValue=""
+      value={searchQuery}
+      onChange={handleSearchChange}
       fullWidth
       placeholder="Search property types"
       startAdornment={(
@@ -20,4 +38,7 @@ export const PropertyTypesSearch = () => (
       sx={{ maxWidth: 500 }}
     />
   </Card>
-);
+  );
+}
+  
+

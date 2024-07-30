@@ -139,7 +139,7 @@ const Page = () => {
             </Stack>
             {isFormOpen && <CreateListingTypesForm onListingTypeCreated={handleListingTypeFetched}/>}
             {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
-            <ListingTypesSearch roles={rolesData} onSearch={handleSearch}/>
+            <ListingTypesSearch listingTypes={listingTypesData} onSearch={handleSearch}/>
             <ListingTypesTable
               count={filteredListingTypes.length}
               items={filteredListingTypes}

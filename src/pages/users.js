@@ -98,9 +98,9 @@ const Page = () => {
     }
   };
 
-  const handleSearch = (filteredUsers) => {
+  const handleSearch = useCallback((filteredUsers) => {
     setFilteredUsers(filteredUsers);
-  };
+  },[]);
 
   return (
     <>

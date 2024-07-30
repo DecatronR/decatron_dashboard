@@ -3,8 +3,6 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { subDays, subHours } from 'date-fns';
 import axios from 'axios';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
@@ -81,9 +79,9 @@ const Page = () => {
     setIsFormOpen(false);
   }
 
-  const handleSearch = (filteredRoles) => {
+  const handleSearch = useCallback((filteredRoles) => {
     setFilteredRoles(filteredRoles);
-  };
+  },[]);
 
   return (
     <>
