@@ -90,23 +90,25 @@ export const AuthProvider = (props) => {
       
       if (!userId) {
         console.log("Could not get userId");
-        return;
+        throw new Error("Could not get userId");
       }
-
-      localStorage.setItem('userId', userId); // we store userId in local storage
-      // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as paramter
+  
+      localStorage.setItem('userId', userId); // Store userId in local storage
+  
       const response = await axios.post('http://localhost:8080/users/editUsers', { id: userId }, { withCredentials: true });
       console.log("User: ", response.data.data);
       const user = response.data.data;
-
+  
       dispatch({
         type: HANDLERS.SIGN_IN,
         payload: user
       });
     } catch (error) {
       console.error("Error during sign-in:", error);
+      throw error; // Rethrow the error to be caught in the calling component
     }
   };
+  
 
   const signOut = async () => {
     try {

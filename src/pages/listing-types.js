@@ -36,6 +36,7 @@ const useListingTypesIds = (listingTypes) => {
 const Page = () => {
   const router = useRouter();
   const [listingTypesData, setListingTypesData] = useState([]);
+  const [filteredListingTypes, setFilteredListingTypes] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const listingTypes = useListingTypes(listingTypesData, page, rowsPerPage);
@@ -66,6 +67,7 @@ const Page = () => {
       const response = await axios.get('http://localhost:8080/listingType/fetchListingType', { withCredentials: true });
       console.log("Listing data: ",response.data);
       setListingTypesData(response.data);
+      setFilteredListingTypes(response.data);
     } catch (err) {
       console.error("Error fetching listingTypes: ", err);
     }
@@ -81,6 +83,9 @@ const Page = () => {
     setIsFormOpen(false);
   }
 
+  const handleSearch = (filteredListingTypes) => {
+    setFilteredListingTypes(filteredListingTypes);
+  };
 
   return (
     <>
@@ -134,10 +139,10 @@ const Page = () => {
             </Stack>
             {isFormOpen && <CreateListingTypesForm onListingTypeCreated={handleListingTypeFetched}/>}
             {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
-            <ListingTypesSearch />
+            <ListingTypesSearch roles={rolesData} onSearch={handleSearch}/>
             <ListingTypesTable
-              count={listingTypesData.length}
-              items={listingTypes}
+              count={filteredListingTypes.length}
+              items={filteredListingTypes}
               onRefresh={handleListingTypeFetched}
               onDeselectAll={listingTypesSelection.handleDeselectAll}
               onDeselectOne={listingTypesSelection.handleDeselectOne}

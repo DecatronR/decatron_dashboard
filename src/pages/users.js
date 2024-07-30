@@ -36,6 +36,7 @@ const useUsersIds = (users) => {
 const Page = () => {
   const router = useRouter();
   const [usersData, setUsersData] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const users = useUsers(usersData, page, rowsPerPage);
@@ -66,6 +67,7 @@ const Page = () => {
       const response = await axios.get('http://localhost:8080/users/getusers', { withCredentials: true });
       console.log("User data: ",response.data);
       setUsersData(response.data);
+      setFilteredUsers(response.data);
     } catch (err) {
       console.error("Error fetching users: ", err);
     }
@@ -96,6 +98,9 @@ const Page = () => {
     }
   };
 
+  const handleSearch = (filteredUsers) => {
+    setFilteredUsers(filteredUsers);
+  };
 
   return (
     <>
@@ -148,10 +153,10 @@ const Page = () => {
               </div>
             </Stack>
             {isFormOpen && <CreateUserForm onUserCreated={handleUserFetched} />}
-            <UsersSearch />
+            <UsersSearch users={usersData} onSearch={handleSearch} />
             <UsersTable
-              count={usersData.length}
-              items={users}
+              count={filteredUsers.length}
+              items={filteredUsers}
               onEditUser={handleEditUser}
               onDeleteUser={handleDeleteUser}
               onDeselectAll={usersSelection.handleDeselectAll}

@@ -2,12 +2,15 @@ import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import PropTypes from 'prop-types';
 import { Box, Divider, MenuItem, MenuList, Popover, Typography } from '@mui/material';
+import { useAuthContext } from 'src/contexts/auth-context';
 import { useAuth } from 'src/hooks/use-auth';
 
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
+  const { user } = useAuthContext(); 
   const auth = useAuth();
+  
 
   const handleSignOut = useCallback(() => {
       onClose?.();
@@ -21,6 +24,10 @@ export const AccountPopover = (props) => {
       router.push('/auth/login');
   },[onClose, router]);
 
+  const capitalizeRole = (role) => {
+    return role ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() : '';
+  };
+  
   return (
     <Popover
       anchorEl={anchorEl}
@@ -45,7 +52,13 @@ export const AccountPopover = (props) => {
           color="text.secondary"
           variant="body2"
         >
-          {auth.user ? auth.user.name : "You're not signed in"}
+          {user?.name ? user.name : "You are not signed in"}
+        </Typography>
+        <Typography
+          color="text.secondary"
+          variant="body2"
+        >
+          {user?.role ?capitalizeRole(user.role) : "You are not signed in"}
         </Typography>
       </Box>
       <Divider />

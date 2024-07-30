@@ -9,7 +9,9 @@ import {
   CardHeader,
   Divider,
   TextField,
-  Unstable_Grid2 as Grid
+  Unstable_Grid2 as Grid, 
+  Select,
+  MenuItem,
 } from '@mui/material';
 
 export const AccountProfileDetails = (props) => {
@@ -23,6 +25,7 @@ export const AccountProfileDetails = (props) => {
     id: '',
     phone: '',
   });
+  const [rolesData, setRolesData] = useState([]);
 
   useEffect(() => {
     if (user && Object.keys(user).length > 0) {
@@ -50,6 +53,19 @@ export const AccountProfileDetails = (props) => {
     },
     []
   );
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/role/getRoles', { withCredentials: true });
+        console.log("roles: ",response.data);
+        setRolesData(response.data);
+      } catch (err) {
+        console.error("Error fetching users: ", err);
+      }
+    };
+    fetchRoles();
+  }, []);
 
   const handleSubmit = useCallback( async (event) => {
       event.preventDefault();
@@ -130,13 +146,23 @@ export const AccountProfileDetails = (props) => {
                 xs={12}
                 md={6}
               >
-                <TextField
+               <Select
                   fullWidth
                   label="Role"
                   name="role"
                   onChange={handleChange}
-                  value={capitalizeRole(values.role)}
-                />
+                  value={values.role}
+                  displayEmpty
+                >
+                  <MenuItem value="" disabled>
+                    Select Role
+                  </MenuItem>
+                  {rolesData.map((role) => (
+                    <MenuItem key={role._id} value={role.slug}>
+                      {role.roleName}
+                    </MenuItem>
+                  ))}
+                </Select>
               </Grid>
             </Grid>
           </Box>

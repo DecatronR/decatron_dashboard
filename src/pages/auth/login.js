@@ -25,9 +25,14 @@ const Page = () => {
         await signIn(values.email, values.password);
         router.push('/');
       } catch (err) {
-        console.log("There was an issue with your sign-in: ", err.message);
+        let errorMessages = [];
+        if (Array.isArray(err.response?.data?.responseMessage)) {
+          errorMessages = err.response.data.responseMessage.map(errMsg => errMsg.msg);
+        } else {
+          errorMessages.push(err.response?.data?.responseMessage || 'An error occurred. Please try again.');
+        }
         helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
+        helpers.setErrors({ submit: errorMessages.join(' ') });
         helpers.setSubmitting(false);
       }
     }

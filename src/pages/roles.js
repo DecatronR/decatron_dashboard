@@ -34,8 +34,8 @@ const useRolesIds = (roles) => {
 };
 
 const Page = () => {
-  const router = useRouter();
   const [rolesData, setRolesData] = useState([]);
+  const [filteredRoles, setFilteredRoles] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const roles = useRoles(rolesData, page, rowsPerPage);
@@ -66,11 +66,11 @@ const Page = () => {
       const response = await axios.get('http://localhost:8080/role/getRoles', { withCredentials: true });
       console.log("User data: ",response.data);
       setRolesData(response.data);
+      setFilteredRoles(response.data);
     } catch (err) {
       console.error("Error fetching users: ", err);
     }
   };
-
 
   useEffect(() => {
     fetchRoles();
@@ -81,6 +81,9 @@ const Page = () => {
     setIsFormOpen(false);
   }
 
+  const handleSearch = (filteredRoles) => {
+    setFilteredRoles(filteredRoles);
+  };
 
   return (
     <>
@@ -134,10 +137,10 @@ const Page = () => {
             </Stack>
             {isFormOpen && <CreateRoleForm onRoleCreated={handleRoleFetched}/>}
             {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
-            <RolesSearch />
+            <RolesSearch roles={rolesData} onSearch={handleSearch}/>
             <RolesTable
-              count={rolesData.length}
-              items={roles}
+              count={filteredRoles.length}
+              items={filteredRoles}
               onRefresh={handleRoleFetched}
               onDeselectAll={rolesSelection.handleDeselectAll}
               onDeselectOne={rolesSelection.handleDeselectOne}
