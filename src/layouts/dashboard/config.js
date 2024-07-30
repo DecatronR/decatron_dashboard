@@ -56,6 +56,14 @@ export const items = [
         path: '/property-types',
       },
       {
+        title: 'Property Usage',
+        path: '/property-usage-types',
+      },
+      {
+        title: 'Property Condition',
+        path: '/property-conditions',
+      },
+      {
         title: 'Add State',
         path: '/states',
       },
