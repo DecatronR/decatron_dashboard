@@ -15,7 +15,7 @@ import {
 import { propertyUsageTypes, propertySubTypes, propertyCondtions } from 'src/components/database/create-listing';
 
 const BasicInformation = (props) => {
-  const { formik, propertyTypes, listingTypes, states } = props;
+  const { formik, propertyTypes, listingTypes, states, localGovernment } = props;
 
   return (
     <form
@@ -193,6 +193,30 @@ const BasicInformation = (props) => {
                   {states.map((option) => (
                     <MenuItem key={option._id} value={option.slug}>
                       {option.state}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Grid>
+              <Grid
+                xs={12}
+                md={6}
+              >
+                <Select
+                  error={!!(formik.touched.localGovernment && formik.errors.localGovernment)}
+                  fullWidth
+                  helperText={formik.touched.localGovernment && formik.errors.localGovernment}
+                  name="state"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.localGovernment}
+                  displayEmpty
+                >
+                  <MenuItem disabled value="">
+                    Select LGA
+                  </MenuItem>
+                  {localGovernment.map((option) => (
+                    <MenuItem key={option._id} value={option.slug}>
+                      {option.lga}
                     </MenuItem>
                   ))}
                 </Select>
