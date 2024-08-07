@@ -110,7 +110,7 @@ const Page = () => (
             md={6}
             lg={4}
           >
-            <OverviewLatestProducts
+            {/* <OverviewLatestProducts
               products={[
                 {
                   id: '5ece2c077e39da27658aa8a9',
@@ -150,8 +150,8 @@ const Page = () => (
             xs={12}
             md={12}
             lg={8}
-          >
-            <OverviewLatestOrders
+          > */}
+            {/* <OverviewLatestOrders
               orders={[
                 {
                   id: 'f69f88012978187a6c12897f',
@@ -215,7 +215,7 @@ const Page = () => (
                 }
               ]}
               sx={{ height: '100%' }}
-            />
+            /> */}
           </Grid>
         </Grid>
       </Container>

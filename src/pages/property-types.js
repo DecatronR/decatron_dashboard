@@ -34,7 +34,6 @@ const usePropertyTypesIds = (propertyTypes) => {
 };
 
 const Page = () => {
-  const router = useRouter();
   const [propertyTypesData, setPropertyTypesData] = useState([]);
   const [filteredPropertyTypes, setFilteredPropertyTypes] = useState([]);
   const [page, setPage] = useState(0);
