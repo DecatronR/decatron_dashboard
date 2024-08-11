@@ -25,7 +25,7 @@ const CreatePropertyUsageTypesForm = ({ onPropertyUsageTypeCreated }) => {
         url: 'http://localhost:8080/propertyUsage/createPropertyUsage',
         headers: { },
         data : {
-          propertyUsageType: values.propertyUsageType,
+          propertyusage: values.propertyUsageType,
         },
         withCredentials: true,
       };

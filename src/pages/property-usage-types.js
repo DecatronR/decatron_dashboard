@@ -62,7 +62,7 @@ const Page = () => {
 
   const fetchPropertyUsageTypes = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/propertyType/fetchPropertyType', { withCredentials: true });
+      const response = await axios.get('http://localhost:8080/propertyUsage/fetchPropertyUsage', { withCredentials: true });
       console.log("Property usage type data: ",response.data);
       setPropertyUsageTypesData(response.data);
       setFilteredPropertyUsageTypes(response.data);
@@ -135,7 +135,7 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            {isFormOpen && <CreatePropertyUsageTypesForm onPropertyUsageTypeCreated={handlePropertyUsageTypeFetched} />}
+            {isFormOpen && <CreatePropertyUsageTypesForm onPropertyUsageTypeCreated={handlePropertyUsageTypesFetched} />}
             {/* add the function to trigger submitonRoleCreated={handleRolesFetched}  */}
             <PropertyUsageTypesSearch propertyUsageTypes={propertyUsageTypesData} onSearch={handleSearch} />
             <PropertyUsageTypesTable

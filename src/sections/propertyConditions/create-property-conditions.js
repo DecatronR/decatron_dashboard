@@ -19,10 +19,10 @@ const CreatePropertyConditionsForm = ({ onPropertyConditionsCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
-      const createPropertyTypeConfig = {
+      const createPropertyConditionConfig = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://localhost:8080/propertyType/createPropertyType',
+        url: 'http://localhost:8080/propertyCondition/createPropertyCondition',
         headers: { },
         data : {
           propertyConditions: values.propertyConditions,
@@ -31,7 +31,7 @@ const CreatePropertyConditionsForm = ({ onPropertyConditionsCreated }) => {
       };
 
       try {
-        const res = await axios(createPropertyConditionsConfig)
+        const res = await axios(createPropertyConditionConfig)
         console.log("Succesfully created new property condition: ", res);
         onPropertyConditionsCreated();
       } catch (err) {

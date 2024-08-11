@@ -53,9 +53,9 @@ export const PropertyUsageTypesTable = (props) => {
     console.log("fetched property usage type id: ", propertyUsageTypeId);
     setEditingPropertyUsageType(propertyUsageTypeId);
     try {
-      const res = await axios.post('http://localhost:8080/propertyUsage/editPropertyUsage', { id: propertyTypeId }, { withCredentials: true });
-      console.log("Exisiting data: ", res.data.data.propertyUsage);
-      setExistingData(res.data.data.propertyUsage);
+      const res = await axios.post('http://localhost:8080/propertyUsage/editPropertyUsage', { id: propertyUsageTypeId }, { withCredentials: true });
+      console.log("Exisiting data: ", res.data.data.propertyusage);
+      setExistingData(res.data.data.propertyusage);
     } catch (error) {
       console.error('Error fetching property type data:', error);
     }
@@ -69,7 +69,7 @@ export const PropertyUsageTypesTable = (props) => {
   const handleSave = async (updatedPropertyUsageType) => {
     console.log("Role id: ", editingPropertyUsageType);
     try {
-      const res = await axios.post('http://localhost:8080/propertyType/updatePropertyType', { id: editingPropertyType, propertyType: updatedPropertyType}, { withCredentials: true });
+      const res = await axios.post('http://localhost:8080/propertyUsage/updatePropertyUsage', { id: editingPropertyUsageType, propertyusage: updatedPropertyUsageType}, { withCredentials: true });
       console.log("Updated property type: ", res.data);
       setEditingPropertyUsageType(null);
       setExistingData(null);
@@ -125,13 +125,13 @@ export const PropertyUsageTypesTable = (props) => {
             </TableHead>
             <TableBody>
               {items.map((propertyUsageType, index) => {
-                const isItemSelected = selected.indexOf(propertyUsageType.id) !== -1;
+                const isItemSelected = selected.indexOf(propertyUsageType._id) !== -1;
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
-                    key={propertyUsageType.id}
+                    key={propertyUsageType._id}
                     selected={isItemSelected}
                   >
                     <TableCell padding="checkbox">
@@ -139,9 +139,9 @@ export const PropertyUsageTypesTable = (props) => {
                         checked={isItemSelected}
                         onChange={(event) => {
                           if (event.target.checked) {
-                            onSelectOne?.(propertyUsageType.id);
+                            onSelectOne?.(propertyUsageType._id);
                           } else {
-                            onDeselectOne?.(propertyUsageType.id);
+                            onDeselectOne?.(propertyUsageType._id);
                           }
                         }}
                         inputProps={{ 'aria-labelledby': labelId }}
@@ -157,10 +157,10 @@ export const PropertyUsageTypesTable = (props) => {
                         spacing={2}
                       >
                         <Avatar src={propertyUsageType.avatar}>
-                          {getInitials(propertyUsageType.propertyUsageType)}
+                          {getInitials(propertyUsageType.propertyusage)}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {propertyUsageType.propertyUsageType}
+                          {propertyUsageType.propertyusage}
                         </Typography>
                       </Stack>
                     </TableCell>
