@@ -53,9 +53,9 @@ export const PropertyConditionsTable = (props) => {
     console.log("fetched property condition id: ", propertyConditionId);
     setEditingPropertyCondition(propertyConditionId);
     try {
-      const res = await axios.post('http://localhost:8080/propertyType/editPropertyType', { id: propertyTypeId }, { withCredentials: true });
-      console.log("Exisiting data: ", res.data.data.propertyType);
-      setExistingData(res.data.data.propertyType);
+      const res = await axios.post('http://localhost:8080/propertyCondition/editPropertyCondition', { id: propertyConditionId }, { withCredentials: true });
+      console.log("Exisiting data: ", res.data.data.propertyCondition);
+      setExistingData(res.data.data.propertyCondition);
     } catch (error) {
       console.error('Error fetching property conditions data:', error);
     }
@@ -69,7 +69,7 @@ export const PropertyConditionsTable = (props) => {
   const handleSave = async (updatedPropertyConditon) => {
     console.log("Condition id: ", editingPropertyCondition);
     try {
-      const res = await axios.post('http://localhost:8080/propertyType/updatePropertyType', { id: editingPropertyType, propertyType: updatedPropertyType}, { withCredentials: true });
+      const res = await axios.post('http://localhost:8080/propertyCondition/updatePropertyCondition', { id: editingPropertyCondition, propertyCondition: updatedPropertyConditon}, { withCredentials: true });
       console.log("Updated property type: ", res.data);
       setEditingPropertyCondition(null);
       setExistingData(null);
@@ -81,7 +81,7 @@ export const PropertyConditionsTable = (props) => {
 
   const handleDeleteClick = async (propertyConditionId) => {
     try {
-      const res = await axios.post('http://localhost:8080/propertyType/deletePropertyType', { id: propertyTypeId }, { withCredentials: true });
+      const res = await axios.post('http://localhost:8080/propertyCondition/deletePropertyCondition', { id: propertyConditionId }, { withCredentials: true });
       console.log('Delete propertyCondition:', res);
       onRefresh();
     } catch (err) {
@@ -131,7 +131,7 @@ export const PropertyConditionsTable = (props) => {
                 return (
                   <TableRow
                     hover
-                    key={propertyCondition.id}
+                    key={propertyCondition._id}
                     selected={isItemSelected}
                   >
                     <TableCell padding="checkbox">
@@ -139,9 +139,9 @@ export const PropertyConditionsTable = (props) => {
                         checked={isItemSelected}
                         onChange={(event) => {
                           if (event.target.checked) {
-                            onSelectOne?.(propertyCondition.id);
+                            onSelectOne?.(propertyCondition._id);
                           } else {
-                            onDeselectOne?.(propertyCondition.id);
+                            onDeselectOne?.(propertyCondition._id);
                           }
                         }}
                         inputProps={{ 'aria-labelledby': labelId }}

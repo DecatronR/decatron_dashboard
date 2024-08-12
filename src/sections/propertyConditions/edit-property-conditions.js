@@ -13,7 +13,7 @@ const EditPropertyConditions = ({ initialData, onSave, onCancel }) => {
       propertyConditions: Yup.string().max(255).required("field can't be empty"),
     }),
     onSubmit: (values, helpers) => {
-      onSave(values.propertyType);
+      onSave(values.propertyConditions);
       helpers.setSubmitting(false);
     },
   });
@@ -37,7 +37,7 @@ const EditPropertyConditions = ({ initialData, onSave, onCancel }) => {
             fullWidth
             helperText={formik.touched.propertyConditions && formik.errors.propertyConditions}
             label="Property Condition"
-            name="propertyCondition"
+            name="propertyConditions"
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
             type="text"

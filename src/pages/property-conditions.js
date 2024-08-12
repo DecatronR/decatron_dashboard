@@ -59,7 +59,7 @@ const Page = () => {
 
   const fetchPropertyConditions = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/propertyType/fetchPropertyType', { withCredentials: true });
+      const response = await axios.get('http://localhost:8080/propertyCondition/fetchPropertyCondition', { withCredentials: true });
       console.log("Property conditions data: ",response.data);
       setPropertyConditionsData(response.data);
       setFilteredPropertyConditions(response.data);
@@ -74,7 +74,7 @@ const Page = () => {
   }, []);
 
   const handlePropertyConditionsFetched = () => {
-    fetchPropertyTypes();
+    fetchPropertyConditions();
     setIsFormOpen(false);
   }
 

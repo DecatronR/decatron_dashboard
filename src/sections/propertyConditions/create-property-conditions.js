@@ -25,7 +25,7 @@ const CreatePropertyConditionsForm = ({ onPropertyConditionsCreated }) => {
         url: 'http://localhost:8080/propertyCondition/createPropertyCondition',
         headers: { },
         data : {
-          propertyConditions: values.propertyConditions,
+          propertyCondition: values.propertyConditions,
         },
         withCredentials: true,
       };
@@ -82,11 +82,11 @@ const CreatePropertyConditionsForm = ({ onPropertyConditionsCreated }) => {
             >
               <Stack spacing={3}>
                 <TextField
-                  error={!!(formik.touched.propertyConditions && formik.errors.propertyCondition)}
+                  error={!!(formik.touched.propertyConditions && formik.errors.propertyConditions)}
                   fullWidth
-                  helperText={formik.touched.propertyConditions && formik.errors.propertyCondition}
+                  helperText={formik.touched.propertyConditions && formik.errors.propertyConditions}
                   label="Property Conditon"
-                  name="propertyCondition"
+                  name="propertyConditions"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                   type="text"
