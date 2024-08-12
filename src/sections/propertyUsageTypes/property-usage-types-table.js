@@ -54,8 +54,8 @@ export const PropertyUsageTypesTable = (props) => {
     setEditingPropertyUsageType(propertyUsageTypeId);
     try {
       const res = await axios.post('http://localhost:8080/propertyUsage/editPropertyUsage', { id: propertyUsageTypeId }, { withCredentials: true });
-      console.log("Exisiting data: ", res.data.data.propertyusage);
-      setExistingData(res.data.data.propertyusage);
+      console.log("Exisiting data: ", res.data.data.propertyUsage);
+      setExistingData(res.data.data.propertyUsage);
     } catch (error) {
       console.error('Error fetching property type data:', error);
     }
@@ -69,7 +69,7 @@ export const PropertyUsageTypesTable = (props) => {
   const handleSave = async (updatedPropertyUsageType) => {
     console.log("Role id: ", editingPropertyUsageType);
     try {
-      const res = await axios.post('http://localhost:8080/propertyUsage/updatePropertyUsage', { id: editingPropertyUsageType, propertyusage: updatedPropertyUsageType}, { withCredentials: true });
+      const res = await axios.post('http://localhost:8080/propertyUsage/updatePropertyUsage', { id: editingPropertyUsageType, propertyUsage: updatedPropertyUsageType}, { withCredentials: true });
       console.log("Updated property type: ", res.data);
       setEditingPropertyUsageType(null);
       setExistingData(null);
@@ -157,10 +157,10 @@ export const PropertyUsageTypesTable = (props) => {
                         spacing={2}
                       >
                         <Avatar src={propertyUsageType.avatar}>
-                          {getInitials(propertyUsageType.propertyusage)}
+                          {getInitials(propertyUsageType.propertyUsage)}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {propertyUsageType.propertyusage}
+                          {propertyUsageType.propertyUsage}
                         </Typography>
                       </Stack>
                     </TableCell>
