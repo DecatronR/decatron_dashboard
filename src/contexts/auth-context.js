@@ -57,7 +57,7 @@ export const AuthProvider = (props) => {
 
   useEffect(() => {
     const initialize = async () => {
-      const userId = localStorage.getItem('userId'); // Retrieve userId from local storage
+      const userId = sessionStorage.getItem('userId'); // Retrieve userId from local storage
       if (userId) {
         try {
           // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as paramter
@@ -93,7 +93,7 @@ export const AuthProvider = (props) => {
         throw new Error("Could not get userId");
       }
   
-      localStorage.setItem('userId', userId); // Store userId in local storage
+      sessionStorage.setItem('userId', userId); // Store userId in local storage
   
       const response = await axios.post('http://localhost:8080/users/editUsers', { id: userId }, { withCredentials: true });
       console.log("User: ", response.data.data);
@@ -113,7 +113,7 @@ export const AuthProvider = (props) => {
   const signOut = async () => {
     try {
       await axios.get('http://localhost:8080/auth/logout', {}, { withCredentials: true });
-      localStorage.removeItem('userId'); // we remove userId from local storage
+      sessionStorage.removeItem('userId'); // we remove userId from local storage
 
       dispatch({
         type: HANDLERS.SIGN_OUT
