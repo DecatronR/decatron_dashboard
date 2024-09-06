@@ -10,6 +10,19 @@ const Page = () => {
   const { signIn } = useAuthContext();
   const [method, setMethod] = useState('email');
 
+  const handleOtpResend = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/auth/resendOTP");
+      console.log("OTP resent", res.data);
+    } catch (error) {
+      console.log("Error resending OTP", error);
+      helpers.setStatus({ success: false });
+      const errorMessage = err.response?.data?.message || 'Something went wrong. Please try again later.';
+      helpers.setErrors({ submit: errorMessage });
+      helpers.setSubmitting(false);
+    }
+  }; 
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -26,18 +39,28 @@ const Page = () => {
         router.push('/');
       } catch (err) {
         let errorMessages = [];
-        if (Array.isArray(err.response?.data?.responseMessage)) {
-          errorMessages = err.response.data.responseMessage.map(errMsg => errMsg.msg);
+        let responseMessage = err.response?.data?.responseMessage || 'An error occurred. Please try again.';
+  
+        if (Array.isArray(responseMessage)) {
+          errorMessages = responseMessage.map(errMsg => errMsg.msg);
         } else {
-          errorMessages.push(err.response?.data?.responseMessage || 'An error occurred. Please try again.');
+          errorMessages.push(responseMessage);
         }
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: errorMessages.join(' ') });
-        helpers.setSubmitting(false);
+        if (responseMessage.includes("Kindly confirm your account to proceed")) {
+         await handleOtpResend();
+          router.push({
+            pathname: '/auth/otp',
+            query: { email: values.email },
+          });
+        } else {
+          helpers.setStatus({ success: false });
+          helpers.setErrors({ submit: errorMessages.join(' ') });
+          helpers.setSubmitting(false);
+        }
       }
     }
   });
-
+  
   const handleMethodChange = useCallback((event, value) => {
     setMethod(value);
   }, []);
