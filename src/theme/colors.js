@@ -25,11 +25,11 @@ export const neutral = {
 };
 
 export const primary = withAlphas({
-  lightest: '#FDEEEE',
-  light: '#F8B2B2',
-  main: '#fb4747',
-  dark: '#D90C0C',
-  darkest: '#7E0000',
+  lightest: '#a59eff',
+  light: '#8177ff',
+  main: '#5a47fb',
+  dark: '#432cde',
+  darkest: '#3019b8',
   contrastText: '#FFFFFF'
 });
 

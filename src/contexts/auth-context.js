@@ -1,17 +1,17 @@
-import { createContext, useContext, useEffect, useReducer } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
+import { createContext, useContext, useEffect, useReducer } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
 
 const HANDLERS = {
-  INITIALIZE: 'INITIALIZE',
-  SIGN_IN: 'SIGN_IN',
-  SIGN_OUT: 'SIGN_OUT'
+  INITIALIZE: "INITIALIZE",
+  SIGN_IN: "SIGN_IN",
+  SIGN_OUT: "SIGN_OUT",
 };
 
 const initialState = {
   isAuthenticated: false,
   isLoading: true,
-  user: null
+  user: null,
 };
 
 const handlers = {
@@ -24,11 +24,11 @@ const handlers = {
         ? {
             isAuthenticated: true,
             isLoading: false,
-            user
+            user,
           }
         : {
-            isLoading: false
-          })
+            isLoading: false,
+          }),
     };
   },
   [HANDLERS.SIGN_IN]: (state, action) => {
@@ -37,17 +37,18 @@ const handlers = {
     return {
       ...state,
       isAuthenticated: true,
-      user
+      user,
     };
   },
   [HANDLERS.SIGN_OUT]: (state) => ({
     ...state,
     isAuthenticated: false,
-    user: null
-  })
+    user: null,
+  }),
 };
 
-const reducer = (state, action) => (handlers[action.type] ? handlers[action.type](state, action) : state);
+const reducer = (state, action) =>
+  handlers[action.type] ? handlers[action.type](state, action) : state;
 
 export const AuthContext = createContext({ undefined });
 
@@ -57,25 +58,29 @@ export const AuthProvider = (props) => {
 
   useEffect(() => {
     const initialize = async () => {
-      const userId = sessionStorage.getItem('userId'); // Retrieve userId from local storage
+      const userId = sessionStorage.getItem("userId"); // Retrieve userId from local storage
       if (userId) {
         try {
           // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as paramter
-          const response = await axios.post('http://localhost:8080/users/editUsers', { id: userId }, { withCredentials: true });
+          const response = await axios.post(
+            "http://localhost:8080/users/editUsers",
+            { id: userId },
+            { withCredentials: true }
+          );
           const user = response.data;
           dispatch({
             type: HANDLERS.INITIALIZE,
-            payload: user
+            payload: user,
           });
         } catch (error) {
           console.error(error);
           dispatch({
-            type: HANDLERS.INITIALIZE
+            type: HANDLERS.INITIALIZE,
           });
         }
       } else {
         dispatch({
-          type: HANDLERS.INITIALIZE
+          type: HANDLERS.INITIALIZE,
         });
       }
     };
@@ -85,41 +90,84 @@ export const AuthProvider = (props) => {
 
   const signIn = async (email, password) => {
     try {
-      const res = await axios.post('http://localhost:8080/auth/login', { email, password }, { withCredentials: true });
+      const res = await axios.post(
+        "http://localhost:8080/auth/login",
+        { email, password },
+        { withCredentials: true }
+      );
+      console.log("signin res: ", res);
       const userId = res.data.user;
-      
+
       if (!userId) {
         console.log("Could not get userId");
         throw new Error("Could not get userId");
       }
-  
-      sessionStorage.setItem('userId', userId); // Store userId in local storage
-  
-      const response = await axios.post('http://localhost:8080/users/editUsers', { id: userId }, { withCredentials: true });
+
+      sessionStorage.setItem("userId", userId); // Store userId in local storage
+
+      const response = await axios.post(
+        "http://localhost:8080/users/editUsers",
+        { id: userId },
+        { withCredentials: true }
+      );
       console.log("User: ", response.data.data);
       const user = response.data.data;
-  
+
       dispatch({
         type: HANDLERS.SIGN_IN,
-        payload: user
+        payload: user,
       });
-    } catch (error) {
+    } catch (err) {
       console.error("Error during sign-in:", error);
-      throw error; // Rethrow the error to be caught in the calling component
+      throw err; // Rethrow the error to be caught in the calling component
     }
   };
-  
+
+  const signUp = async (name, email, phone, role, password, confirmpassword) => {
+    try {
+      const res = await axios.post(
+        "http://localhost:8080/auth/register",
+        {
+          name,
+          email,
+          phone,
+          role,
+          password,
+          confirmpassword,
+        },
+        { withCredentials: true }
+      );
+    } catch (err) {
+      console.error("Error during sign-up:", err);
+      throw err;
+    }
+  };
+
+  const otpAuth = async (email, otp) => {
+    try {
+      const res = await axios.post(
+        "http://localhost:8080/auth/confirmOTP",
+        { email: email, otp: otp },
+        { withCredentials: true }
+      );
+      console.log("otp response: ", res);
+    } catch (err) {
+      console.error("Error during sign-in:", error);
+      throw err;
+    }
+  };
 
   const signOut = async () => {
     try {
-      await axios.get('http://localhost:8080/auth/logout', {}, { withCredentials: true });
-      sessionStorage.removeItem('userId'); // we remove userId from local storage
+      await axios.get("http://localhost:8080/auth/logout", {}, { withCredentials: true });
+      sessionStorage.removeItem("userId"); // we remove userId from local storage
 
       dispatch({
-        type: HANDLERS.SIGN_OUT
+        type: HANDLERS.SIGN_OUT,
       });
     } catch (err) {
       console.error("Error during sign-out:", err);
+      throw err;
     }
   };
 
@@ -128,7 +176,9 @@ export const AuthProvider = (props) => {
       value={{
         ...state,
         signIn,
-        signOut
+        signUp,
+        otpAuth,
+        signOut,
       }}
     >
       {children}
@@ -137,7 +187,7 @@ export const AuthProvider = (props) => {
 };
 
 AuthProvider.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 export const AuthConsumer = AuthContext.Consumer;

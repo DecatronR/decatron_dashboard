@@ -82,23 +82,12 @@ export const Layout = (props) => {
               Welcome to{' '}
               <Box
                 component="a"
-                sx={{ color: '#15B79E' }}
+                sx={{ color: '#5a47fb' }}
                 target="_blank"
               >
                 Decatron 360
               </Box>
             </Typography>
-            <Typography
-              align="center"
-              sx={{ mb: 3 }}
-              variant="subtitle1"
-            >
-              The stress free way to buy Real Estate
-            </Typography>
-            <img
-              alt=""
-              src="/assets/auth-illustration.svg"
-            />
           </Box>
         </Grid>
       </Grid>
