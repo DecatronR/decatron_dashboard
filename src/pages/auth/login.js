@@ -42,7 +42,7 @@ const Page = () => {
       try {
         const res = await signIn(values.email, values.password);
         console.log("response: ", res);
-        router.push("/");
+        router.replace("/");
       } catch (err) {
         let errorMessages = [];
         let responseMessage =
