@@ -1,84 +1,71 @@
-import Head from 'next/head';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Box, Button, Link, Stack, TextField, Typography, Select, MenuItem } from '@mui/material';
-import axios from 'axios';
+import Head from "next/head";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Box, Button, Link, Stack, TextField, Typography, Select, MenuItem } from "@mui/material";
+import axios from "axios";
 
 const CreateRoleForm = ({ onRoleCreated }) => {
-
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const formik = useFormik({
     initialValues: {
-      role: '',
-      submit: null
+      role: "",
+      submit: null,
     },
     validationSchema: Yup.object({
-      role: Yup
-        .string()
-        .max(255)
-        .required("field can't be empty"),
+      role: Yup.string().max(255).required("field can't be empty"),
     }),
 
     onSubmit: async (values, helpers) => {
-        const createRoleConfig = {
-          method: 'post',
-          maxBodyLength: Infinity,
-          url: 'http://localhost:8080/role/createRole',
-          headers: { },
-          data : {
-            "roleName" : values.role,
-          },
-          withCredentials: true,
-        };
+      const createRoleConfig = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `${baseUrl}/role/createRole`,
+        headers: {},
+        data: {
+          roleName: values.role,
+        },
+        withCredentials: true,
+      };
 
-        try {
-          const res = await axios(createRoleConfig);
-          console.log("Succesfully created new role: ", res);
-          onRoleCreated();
-        } catch (error) {
-          console.log("Issue with creating role: ", error);
-          helpers.setStatus({ success: false });
-          helpers.setErrors({ submit: err.message });
-          helpers.setSubmitting(false);
-        }
-    }
+      try {
+        const res = await axios(createRoleConfig);
+        console.log("Succesfully created new role: ", res);
+        onRoleCreated();
+      } catch (error) {
+        console.log("Issue with creating role: ", error);
+        helpers.setStatus({ success: false });
+        helpers.setErrors({ submit: err.message });
+        helpers.setSubmitting(false);
+      }
+    },
   });
 
   return (
     <>
       <Head>
-        <title>
-          Create New Role
-        </title>
+        <title>Create New Role</title>
       </Head>
       <Box
         sx={{
-          flex: '1 1 auto',
-          alignItems: 'center',
-          display: 'flex',
-          justifyContent: 'center'
+          flex: "1 1 auto",
+          alignItems: "center",
+          display: "flex",
+          justifyContent: "center",
         }}
       >
         <Box
           sx={{
             maxWidth: 550,
             px: 3,
-            py: '100px',
-            width: '100%'
+            py: "100px",
+            width: "100%",
           }}
         >
           <div>
-            <Stack
-              spacing={1}
-              sx={{ mb: 3 }}
-            >
-              <Typography variant="h4">
-                Create New Role
-              </Typography>
+            <Stack spacing={1} sx={{ mb: 3 }}>
+              <Typography variant="h4">Create New Role</Typography>
             </Stack>
-            <form
-              noValidate
-              onSubmit={formik.handleSubmit}
-            >
+            <form noValidate onSubmit={formik.handleSubmit}>
               <Stack spacing={3}>
                 <TextField
                   error={!!(formik.touched.role && formik.errors.role)}
@@ -93,21 +80,11 @@ const CreateRoleForm = ({ onRoleCreated }) => {
                 />
               </Stack>
               {formik.errors.submit && (
-                <Typography
-                  color="error"
-                  sx={{ mt: 3 }}
-                  variant="body2"
-                >
+                <Typography color="error" sx={{ mt: 3 }} variant="body2">
                   {formik.errors.submit}
                 </Typography>
               )}
-              <Button
-                fullWidth
-                size="large"
-                sx={{ mt: 3 }}
-                type="submit"
-                variant="contained"
-              >
+              <Button fullWidth size="large" sx={{ mt: 3 }} type="submit" variant="contained">
                 Create
               </Button>
             </form>

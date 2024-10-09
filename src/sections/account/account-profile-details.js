@@ -1,5 +1,5 @@
-import { useCallback, useState, useEffect } from 'react';
-import axios from 'axios';
+import { useCallback, useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -9,56 +9,56 @@ import {
   CardHeader,
   Divider,
   TextField,
-  Unstable_Grid2 as Grid, 
+  Unstable_Grid2 as Grid,
   Select,
   MenuItem,
-} from '@mui/material';
+} from "@mui/material";
 
 export const AccountProfileDetails = (props) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const { user } = props;
 
   const [values, setValues] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    role: '', 
-    id: '',
-    phone: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    role: "",
+    id: "",
+    phone: "",
   });
   const [rolesData, setRolesData] = useState([]);
 
   useEffect(() => {
     if (user && Object.keys(user).length > 0) {
       setValues({
-        firstName: user.name?.split(' ')[0] || '',
-        lastName: user.name?.split(' ')[1] || '',
-        email: user.email || '',
-        role: user.role  || '',
-        id: user.id || '',
-        phone: user.phone || ''
+        firstName: user.name?.split(" ")[0] || "",
+        lastName: user.name?.split(" ")[1] || "",
+        email: user.email || "",
+        role: user.role || "",
+        id: user.id || "",
+        phone: user.phone || "",
       });
     }
   }, [user]);
 
   const capitalizeRole = (role) => {
-    return role ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() : '';
+    return role ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() : "";
   };
 
-  const handleChange = useCallback(
-    (event) => {
-      setValues((prevState) => ({
-        ...prevState,
-        [event.target.name]: event.target.value
-      }));
-    },
-    []
-  );
+  const handleChange = useCallback((event) => {
+    setValues((prevState) => ({
+      ...prevState,
+      [event.target.name]: event.target.value,
+    }));
+  }, []);
 
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/role/getRoles', { withCredentials: true });
-        console.log("roles: ",response.data);
+        const response = await axios.get(`${baseUrl}/role/getRoles`, {
+          withCredentials: true,
+        });
+        console.log("roles: ", response.data);
         setRolesData(response.data);
       } catch (err) {
         console.error("Error fetching users: ", err);
@@ -67,7 +67,8 @@ export const AccountProfileDetails = (props) => {
     fetchRoles();
   }, []);
 
-  const handleSubmit = useCallback( async (event) => {
+  const handleSubmit = useCallback(
+    async (event) => {
       event.preventDefault();
       const updatedUser = {
         ...values,
@@ -76,36 +77,25 @@ export const AccountProfileDetails = (props) => {
       };
 
       try {
-        console.log('Updating user:', updatedUser);
-        await axios.post('http://localhost:8080/users/update', updatedUser, { withCredentials: true });
+        console.log("Updating user:", updatedUser);
+        await axios.post(`${baseUrl}/users/update`, updatedUser, {
+          withCredentials: true,
+        });
       } catch (err) {
-        console.error('Error updating user:', err);
+        console.error("Error updating user:", err);
       }
     },
     [values]
   );
 
   return (
-    <form
-      autoComplete="off"
-      noValidate
-      onSubmit={handleSubmit}
-    >
+    <form autoComplete="off" noValidate onSubmit={handleSubmit}>
       <Card>
-        <CardHeader
-          subheader="The information can be edited"
-          title="Profile"
-        />
+        <CardHeader subheader="The information can be edited" title="Profile" />
         <CardContent sx={{ pt: 0 }}>
           <Box sx={{ m: -1.5 }}>
-            <Grid
-              container
-              spacing={3}
-            >
-              <Grid
-                xs={12}
-                md={6}
-              >
+            <Grid container spacing={3}>
+              <Grid xs={12} md={6}>
                 <TextField
                   fullWidth
                   helperText="Please specify the first name"
@@ -116,10 +106,7 @@ export const AccountProfileDetails = (props) => {
                   value={values.firstName}
                 />
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
+              <Grid xs={12} md={6}>
                 <TextField
                   fullWidth
                   label="Last name"
@@ -129,10 +116,7 @@ export const AccountProfileDetails = (props) => {
                   value={values.lastName}
                 />
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
+              <Grid xs={12} md={6}>
                 <TextField
                   fullWidth
                   label="Email Address"
@@ -142,11 +126,8 @@ export const AccountProfileDetails = (props) => {
                   value={values.email}
                 />
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-               <Select
+              <Grid xs={12} md={6}>
+                <Select
                   fullWidth
                   label="Role"
                   name="role"
@@ -168,11 +149,8 @@ export const AccountProfileDetails = (props) => {
           </Box>
         </CardContent>
         <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button
-            variant="contained"
-            type="submit"
-          >
+        <CardActions sx={{ justifyContent: "flex-end" }}>
+          <Button variant="contained" type="submit">
             Save details
           </Button>
         </CardActions>

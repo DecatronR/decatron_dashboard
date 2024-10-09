@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import axios from "axios";
+import PropTypes from "prop-types";
+import { useRouter } from "next/router";
 import {
   Avatar,
   Box,
@@ -17,14 +17,15 @@ import {
   Typography,
   IconButton,
   SvgIcon,
-} from '@mui/material';
-import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
-import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
-import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
-import EditLocalGovernments from './edit-local-governments';
+} from "@mui/material";
+import { Scrollbar } from "src/components/scrollbar";
+import { getInitials } from "src/utils/get-initials";
+import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
+import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
+import EditLocalGovernments from "./edit-local-governments";
 
 export const LocalGovernmentsTable = (props) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const {
     count = 0,
     items = [],
@@ -37,15 +38,15 @@ export const LocalGovernmentsTable = (props) => {
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
   } = props;
 
   const [editingLocalGovernment, setEditingLocalGovernment] = useState(null);
   const [editingState, setEditingStateId] = useState(null);
   const [existingData, setExistingData] = useState(null);
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items.length > 0 && selected.length === items.length;
 
   const serialNumber = (index) => {
     return page * rowsPerPage + index + 1;
@@ -56,11 +57,15 @@ export const LocalGovernmentsTable = (props) => {
     setEditingLocalGovernment(lgaId);
     setEditingStateId(stateId);
     try {
-      const res = await axios.post('http://localhost:8080/lga/editLGA', { id: lgaId }, { withCredentials: true });
-      console.log("Exisiting data: ", res.data.data.lga);
+      const res = await axios.post(
+        `${baseUrl}/lga/editLGA`,
+        { id: lgaId },
+        { withCredentials: true }
+      );
+      console.log("Existing data: ", res.data.data.lga);
       setExistingData(res.data.data.lga);
     } catch (error) {
-      console.error('Error fetching localGovernment data:', error);
+      console.error("Error fetching localGovernment data:", error);
     }
   };
 
@@ -72,23 +77,31 @@ export const LocalGovernmentsTable = (props) => {
   const handleSave = async (updatedLga) => {
     console.log("Local government id: ", editingLocalGovernment);
     try {
-      const res = await axios.post('http://localhost:8080/lga/updateLGA', { id: editingLocalGovernment, lga: updatedLga, stateId: editingState }, { withCredentials: true });
+      const res = await axios.post(
+        `${baseUrl}/lga/updateLGA`,
+        { id: editingLocalGovernment, lga: updatedLga, stateId: editingState },
+        { withCredentials: true }
+      );
       console.log("Updated role: ", res.data);
       setEditingLocalGovernment(null);
       setExistingData(null);
       onRefresh();
     } catch (error) {
-      console.error('Error updating role:', error);
+      console.error("Error updating role:", error);
     }
   };
 
   const handleDeleteClick = async (lgaId) => {
     try {
-      const res = await axios.post('http://localhost:8080/lga/deleteLGA', { id: lgaId }, { withCredentials: true });
-      console.log('Delete local government:', res);
+      const res = await axios.post(
+        `${baseUrl}/lga/deleteLGA`,
+        { id: lgaId },
+        { withCredentials: true }
+      );
+      console.log("Delete local government:", res);
       onRefresh();
     } catch (err) {
-      console.error('Error deleting local goverment:', err);
+      console.error("Error deleting local goverment:", err);
     }
   };
 
@@ -112,18 +125,10 @@ export const LocalGovernmentsTable = (props) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>
-                  #
-                </TableCell>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Edit
-                </TableCell>
-                <TableCell>
-                  Delete
-                </TableCell>
+                <TableCell>#</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Edit</TableCell>
+                <TableCell>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -132,11 +137,7 @@ export const LocalGovernmentsTable = (props) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
-                  <TableRow
-                    hover
-                    key={localGovernment.id}
-                    selected={isItemSelected}
-                  >
+                  <TableRow hover key={localGovernment.id} selected={isItemSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isItemSelected}
@@ -147,29 +148,25 @@ export const LocalGovernmentsTable = (props) => {
                             onDeselectOne?.(localGovernment.id);
                           }
                         }}
-                        inputProps={{ 'aria-labelledby': labelId }}
+                        inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
+                    <TableCell>{serialNumber(index)}</TableCell>
                     <TableCell>
-                      {serialNumber(index)}
-                    </TableCell>
-                    <TableCell>
-                      <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={2}
-                      >
+                      <Stack alignItems="center" direction="row" spacing={2}>
                         <Avatar src={localGovernment.avatar}>
                           {getInitials(localGovernment.lga)}
                         </Avatar>
-                        <Typography variant="subtitle2">
-                          {localGovernment.lga}
-                        </Typography>
+                        <Typography variant="subtitle2">{localGovernment.lga}</Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                        {/* the user id is initialized with an underscore exactly this way at the backend */}
-                    <IconButton onClick={() => handleEditClick(localGovernment._id, localGovernment.stateId)}>
+                      {/* the user id is initialized with an underscore exactly this way at the backend */}
+                      <IconButton
+                        onClick={() =>
+                          handleEditClick(localGovernment._id, localGovernment.stateId)
+                        }
+                      >
                         <SvgIcon fontSize="small">
                           <PencilIcon />
                         </SvgIcon>
@@ -223,7 +220,7 @@ LocalGovernmentsTable.propTypes = {
   onDeleteLocalGovernment: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };
 
 export default LocalGovernmentsTable;

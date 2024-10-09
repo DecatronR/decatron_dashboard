@@ -1,36 +1,31 @@
-import { useCallback, useMemo, useState, useEffect } from 'react';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import axios from 'axios';
-import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
-import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
-import { useSelection } from 'src/hooks/use-selection';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { LocalGovernmentsTable } from 'src/sections/localGovernments/local-governments-table';
-import { LocalGovernmentsSearch } from 'src/sections/localGovernments/local-governments-search';
-import { applyPagination } from 'src/utils/apply-pagination';
-import CreateLocalGovernmentsForm from 'src/sections/localGovernments/create-local-governments-form';
+import { useCallback, useMemo, useState, useEffect } from "react";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import axios from "axios";
+import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
+import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
+import { Box, Button, Container, Stack, SvgIcon, Typography } from "@mui/material";
+import { useSelection } from "src/hooks/use-selection";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
+import { LocalGovernmentsTable } from "src/sections/localGovernments/local-governments-table";
+import { LocalGovernmentsSearch } from "src/sections/localGovernments/local-governments-search";
+import { applyPagination } from "src/utils/apply-pagination";
+import CreateLocalGovernmentsForm from "src/sections/localGovernments/create-local-governments-form";
 
 const useLocalGovernmenmts = (data, page, rowsPerPage) => {
-  return useMemo(
-    () => {
-      return applyPagination(data, page, rowsPerPage);
-    },
-    [data, page, rowsPerPage]
-  );
+  return useMemo(() => {
+    return applyPagination(data, page, rowsPerPage);
+  }, [data, page, rowsPerPage]);
 };
 
 const useLocalGovernmentsIds = (localGovernments) => {
-  return useMemo(
-    () => {
-      return localGovernments.map((localGovernment) => localGovernment.id);
-    },
-    [localGovernments]
-  );
+  return useMemo(() => {
+    return localGovernments.map((localGovernment) => localGovernment.id);
+  }, [localGovernments]);
 };
 
 const Page = () => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const [localGovernmentsData, setLocalGovernmentsData] = useState([]);
   const [filteredLocalGovernments, setFilteredLocalGovernments] = useState([]);
@@ -41,35 +36,30 @@ const Page = () => {
   const localGovernmentsSelection = useSelection(localGovernmentsIds);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const handlePageChange = useCallback(
-    (event, value) => {
-      setPage(value);
-    },
-    []
-  );
+  const handlePageChange = useCallback((event, value) => {
+    setPage(value);
+  }, []);
 
-  const handleRowsPerPageChange = useCallback(
-    (event) => {
-      setRowsPerPage(event.target.value);
-    },
-    []
-  );
+  const handleRowsPerPageChange = useCallback((event) => {
+    setRowsPerPage(event.target.value);
+  }, []);
 
   const handleToggleForm = () => {
     setIsFormOpen(!isFormOpen);
-  }
+  };
 
   const fetchLocalGovernments = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/lga/fetchLGA', { withCredentials: true });
-      console.log("LGAs data: ",response.data);
+      const response = await axios.get(`${baseUrl}/lga/fetchLGA`, {
+        withCredentials: true,
+      });
+      console.log("LGAs data: ", response.data);
       setLocalGovernmentsData(response.data);
       setFilteredLocalGovernments(response.data);
     } catch (err) {
       console.error("Error fetching LGAs: ", err);
     }
   };
-
 
   useEffect(() => {
     fetchLocalGovernments();
@@ -78,7 +68,7 @@ const Page = () => {
   const handleLocalGovernmentsFetched = () => {
     fetchLocalGovernments();
     setIsFormOpen(false);
-  }
+  };
 
   const handleEditLocalGovernment = async (localGovernmentId) => {
     router.push(`/edit-role/${localGovernmentIdId}`);
@@ -87,10 +77,14 @@ const Page = () => {
   const handleDeleteLocalGovernment = async (userId) => {
     try {
       console.log("Local Government Id ready: ", roleId);
-      const res = await axios.post('http://localhost:8080/users/delete', { id: userId }, { withCredentials: true });
+      const res = await axios.post(
+        `${baseUrl}/users/delete`,
+        { id: userId },
+        { withCredentials: true }
+      );
       console.log("Delete local government: ", res);
       fetchLocalGovernments();
-    } catch(err) {
+    } catch (err) {
       console.error("Error deleting local governments: ", err);
     }
   };
@@ -102,46 +96,35 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>
-          LGAs
-        </title>
+        <title>LGAs</title>
       </Head>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          py: 8
+          py: 8,
         }}
       >
         <Container maxWidth="xl">
           <Stack spacing={3}>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              spacing={4}
-            >
+            <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
-                <Typography variant="h4">
-                  LGAs
-                </Typography>
-                <Stack
-                  alignItems="center"
-                  direction="row"
-                  spacing={1}
-                >
-                </Stack>
+                <Typography variant="h4">LGAs</Typography>
+                <Stack alignItems="center" direction="row" spacing={1}></Stack>
               </Stack>
               <div>
                 <Button
-                  startIcon={ !isFormOpen ? (
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  ) : (
-                    <SvgIcon fontSize="small">
+                  startIcon={
+                    !isFormOpen ? (
+                      <SvgIcon fontSize="small">
+                        <PlusIcon />
+                      </SvgIcon>
+                    ) : (
+                      <SvgIcon fontSize="small">
                         <XMarkIcon />
-                    </SvgIcon>
-                  )}
+                      </SvgIcon>
+                    )
+                  }
                   variant="contained"
                   onClick={handleToggleForm}
                 >
@@ -149,7 +132,11 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            {isFormOpen && <CreateLocalGovernmentsForm onLocalGovernmentCreated={handleLocalGovernmentsFetched} />} 
+            {isFormOpen && (
+              <CreateLocalGovernmentsForm
+                onLocalGovernmentCreated={handleLocalGovernmentsFetched}
+              />
+            )}
             <LocalGovernmentsSearch localGovernments={localGovernments} onSearch={handleSearch} />
             <LocalGovernmentsTable
               count={filteredLocalGovernments.length}
@@ -174,10 +161,6 @@ const Page = () => {
   );
 };
 
-Page.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;

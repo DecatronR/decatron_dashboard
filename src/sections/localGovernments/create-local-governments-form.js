@@ -1,40 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Box, Button, Stack, TextField, Typography, Select, MenuItem } from '@mui/material';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import Head from "next/head";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Box, Button, Stack, TextField, Typography, Select, MenuItem } from "@mui/material";
+import axios from "axios";
 
 const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const [states, setStates] = useState([]);
 
   const formik = useFormik({
     initialValues: {
-      localGovernment: '',
-      state: '',
-      stateId: '',
-      submit: null
+      localGovernment: "",
+      state: "",
+      stateId: "",
+      submit: null,
     },
     validationSchema: Yup.object({
-      localGovernment: Yup
-        .string()
-        .max(255)
-        .required("field can't be empty"),
-      state: Yup
-        .string()
-        .required("Please select a state"),
+      localGovernment: Yup.string().max(255).required("field can't be empty"),
+      state: Yup.string().required("Please select a state"),
     }),
 
     onSubmit: async (values, helpers) => {
       console.log("Create button clicked");
       const localGovernmentData = {
         stateId: values.stateId,
-        lga: values.localGovernment
+        lga: values.localGovernment,
       };
       const createLocalGovernmentConfig = {
-        method: 'post',
+        method: "post",
         maxBodyLength: Infinity,
-        url: 'http://localhost:8080/lga/createLGA',
+        url: `${baseUrl}/lga/createLGA`,
         headers: {},
         data: localGovernmentData,
         withCredentials: true,
@@ -51,14 +47,14 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
       }
-    }
+    },
   });
 
   const handleFetchStates = async () => {
     const fetchStatesConfig = {
-      method: 'get',
+      method: "get",
       maxBodyLength: Infinity,
-      url: 'http://localhost:8080/state/fetchState',
+      url: `${baseUrl}/state/fetchState`,
       headers: {},
       withCredentials: true,
     };
@@ -79,9 +75,9 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
   }, []);
 
   const handleStateChange = (event) => {
-    const selectedState = states.find(state => state._id === event.target.value);
-    formik.setFieldValue('state', selectedState.state);
-    formik.setFieldValue('stateId', selectedState._id);
+    const selectedState = states.find((state) => state._id === event.target.value);
+    formik.setFieldValue("state", selectedState.state);
+    formik.setFieldValue("stateId", selectedState._id);
   };
 
   return (
@@ -91,18 +87,18 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
       </Head>
       <Box
         sx={{
-          flex: '1 1 auto',
-          alignItems: 'center',
-          display: 'flex',
-          justifyContent: 'center'
+          flex: "1 1 auto",
+          alignItems: "center",
+          display: "flex",
+          justifyContent: "center",
         }}
       >
         <Box
           sx={{
             maxWidth: 550,
             px: 3,
-            py: '100px',
-            width: '100%'
+            py: "100px",
+            width: "100%",
           }}
         >
           <div>
@@ -134,7 +130,7 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
                   displayEmpty
                 >
                   <MenuItem value="" disabled>
-                  Select State
+                    Select State
                   </MenuItem>
                   {states.map((state) => (
                     <MenuItem key={state._id} value={state._id}>
@@ -144,21 +140,11 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
                 </Select>
               </Stack>
               {formik.errors.submit && (
-                <Typography
-                  color="error"
-                  sx={{ mt: 3 }}
-                  variant="body2"
-                >
+                <Typography color="error" sx={{ mt: 3 }} variant="body2">
                   {formik.errors.submit}
                 </Typography>
               )}
-              <Button
-                fullWidth
-                size="large"
-                sx={{ mt: 3 }}
-                type="submit"
-                variant="contained"
-              >
+              <Button fullWidth size="large" sx={{ mt: 3 }} type="submit" variant="contained">
                 Create
               </Button>
             </form>

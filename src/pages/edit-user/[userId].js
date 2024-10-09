@@ -1,13 +1,14 @@
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import { Box, Container, Stack, Typography, Grid } from '@mui/material';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { EditUserProfile } from 'src/sections/users/edit-user-profile';
-import { EditUserProfileDetails } from 'src/sections/users/edit-user-profile-details';
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import { Box, Container, Stack, Typography, Grid } from "@mui/material";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
+import { EditUserProfile } from "src/sections/users/edit-user-profile";
+import { EditUserProfileDetails } from "src/sections/users/edit-user-profile-details";
 
 const EditUser = () => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const userId = router.query.userId;
   const [userData, setUserData] = useState(null);
@@ -16,7 +17,11 @@ const EditUser = () => {
     if (userId) {
       const fetchUser = async () => {
         try {
-          const res = await axios.post('http://localhost:8080/users/editUsers', { id: userId }, { withCredentials: true });
+          const res = await axios.post(
+            `${baseUrl}/users/editUsers`,
+            { id: userId },
+            { withCredentials: true }
+          );
           setUserData(res.data.data);
         } catch (error) {
           console.error("Error fetching user data: ", error);
@@ -33,8 +38,8 @@ const EditUser = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.post('http://localhost:8080/users/update', userData, { withCredentials: true });
-      router.push('/users');
+      await axios.post(`${baseUrl}/users/update`, userData, { withCredentials: true });
+      router.push("/users");
     } catch (error) {
       console.error("Error updating user data: ", error);
     }
@@ -47,42 +52,31 @@ const EditUser = () => {
   return (
     <>
       <Head>
-        <title>
-          Edit User | Decatron Dashboard
-        </title>
+        <title>Edit User | Decatron Dashboard</title>
       </Head>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          py: 8
+          py: 8,
         }}
       >
         <Container maxWidth="lg">
           <Stack spacing={3}>
             <div>
-              <Typography variant="h4">
-                Edit User
-              </Typography>
+              <Typography variant="h4">Edit User</Typography>
             </div>
             <div>
-              <Grid
-                container
-                spacing={3}
-              >
-                <Grid
-                  xs={12}
-                  md={6}
-                  lg={4}
-                >
+              <Grid container spacing={3}>
+                <Grid xs={12} md={6} lg={4}>
                   <EditUserProfile user={userData} />
                 </Grid>
-                <Grid
-                  xs={12}
-                  md={6}
-                  lg={8}
-                >
-                  <EditUserProfileDetails user={userData} onProfileChange={handleProfileChange} onSubmit={handleSubmit} />
+                <Grid xs={12} md={6} lg={8}>
+                  <EditUserProfileDetails
+                    user={userData}
+                    onProfileChange={handleProfileChange}
+                    onSubmit={handleSubmit}
+                  />
                 </Grid>
               </Grid>
             </div>
@@ -93,10 +87,6 @@ const EditUser = () => {
   );
 };
 
-EditUser.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+EditUser.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default EditUser;

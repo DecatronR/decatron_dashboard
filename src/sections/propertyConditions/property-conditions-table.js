@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
 import {
   Avatar,
   Box,
@@ -16,14 +16,15 @@ import {
   Typography,
   IconButton,
   SvgIcon,
-} from '@mui/material';
-import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
-import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
-import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
-import EditPropertyConditions from './edit-property-conditions';
+} from "@mui/material";
+import { Scrollbar } from "src/components/scrollbar";
+import { getInitials } from "src/utils/get-initials";
+import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
+import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
+import EditPropertyConditions from "./edit-property-conditions";
 
 export const PropertyConditionsTable = (props) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const {
     count = 0,
     items = [],
@@ -36,14 +37,14 @@ export const PropertyConditionsTable = (props) => {
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
   } = props;
 
   const [editingPropertyCondition, setEditingPropertyCondition] = useState(null);
   const [existingData, setExistingData] = useState(null);
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items.length > 0 && selected.length === items.length;
 
   const serialNumber = (index) => {
     return page * rowsPerPage + index + 1;
@@ -53,11 +54,15 @@ export const PropertyConditionsTable = (props) => {
     console.log("fetched property condition id: ", propertyConditionId);
     setEditingPropertyCondition(propertyConditionId);
     try {
-      const res = await axios.post('http://localhost:8080/propertyCondition/editPropertyCondition', { id: propertyConditionId }, { withCredentials: true });
-      console.log("Exisiting data: ", res.data.data.propertyCondition);
+      const res = await axios.post(
+        `${baseUrl}/propertyCondition/editPropertyCondition`,
+        { id: propertyConditionId },
+        { withCredentials: true }
+      );
+      console.log("Existing data: ", res.data.data.propertyCondition);
       setExistingData(res.data.data.propertyCondition);
     } catch (error) {
-      console.error('Error fetching property conditions data:', error);
+      console.error("Error fetching property conditions data:", error);
     }
   };
 
@@ -66,29 +71,37 @@ export const PropertyConditionsTable = (props) => {
     setExistingData(null);
   };
 
-  const handleSave = async (updatedPropertyConditon) => {
+  const handleSave = async (updatedPropertyCondition) => {
     console.log("Condition id: ", editingPropertyCondition);
     try {
-      const res = await axios.post('http://localhost:8080/propertyCondition/updatePropertyCondition', { id: editingPropertyCondition, propertyCondition: updatedPropertyConditon}, { withCredentials: true });
+      const res = await axios.post(
+        `${baseUrl}/propertyCondition/updatePropertyCondition`,
+        { id: editingPropertyCondition, propertyCondition: updatedPropertyCondition },
+        { withCredentials: true }
+      );
       console.log("Updated property type: ", res.data);
       setEditingPropertyCondition(null);
       setExistingData(null);
       onRefresh();
     } catch (error) {
-      console.error('Error updating role:', error);
+      console.error("Error updating role:", error);
     }
   };
 
   const handleDeleteClick = async (propertyConditionId) => {
     try {
-      const res = await axios.post('http://localhost:8080/propertyCondition/deletePropertyCondition', { id: propertyConditionId }, { withCredentials: true });
-      console.log('Delete propertyCondition:', res);
+      const res = await axios.post(
+        `${baseUrl}/propertyCondition/deletePropertyCondition`,
+        { id: propertyConditionId },
+        { withCredentials: true }
+      );
+      console.log("Delete propertyCondition:", res);
       onRefresh();
     } catch (err) {
-      console.error('Error deleting propertyCondition:', err);
+      console.error("Error deleting propertyCondition:", err);
     }
   };
-  
+
   return (
     <Card>
       <Scrollbar>
@@ -109,18 +122,10 @@ export const PropertyConditionsTable = (props) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>
-                  #
-                </TableCell>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Edit
-                </TableCell>
-                <TableCell>
-                  Delete
-                </TableCell>
+                <TableCell>#</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Edit</TableCell>
+                <TableCell>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -129,11 +134,7 @@ export const PropertyConditionsTable = (props) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
-                  <TableRow
-                    hover
-                    key={propertyCondition._id}
-                    selected={isItemSelected}
-                  >
+                  <TableRow hover key={propertyCondition._id} selected={isItemSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isItemSelected}
@@ -144,18 +145,12 @@ export const PropertyConditionsTable = (props) => {
                             onDeselectOne?.(propertyCondition._id);
                           }
                         }}
-                        inputProps={{ 'aria-labelledby': labelId }}
+                        inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
+                    <TableCell>{serialNumber(index)}</TableCell>
                     <TableCell>
-                      {serialNumber(index)}
-                    </TableCell>
-                    <TableCell>
-                      <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={2}
-                      >
+                      <Stack alignItems="center" direction="row" spacing={2}>
                         <Avatar src={propertyCondition.avatar}>
                           {getInitials(propertyCondition.propertyCondition)}
                         </Avatar>
@@ -180,8 +175,8 @@ export const PropertyConditionsTable = (props) => {
                       )}
                     </TableCell>
                     <TableCell>
-                     {/* the user id is initialized with an underscore exactly this way at the backend */}
-                     <IconButton onClick={() => handleDeleteClick(propertyCondition._id)}>
+                      {/* the user id is initialized with an underscore exactly this way at the backend */}
+                      <IconButton onClick={() => handleDeleteClick(propertyCondition._id)}>
                         <SvgIcon fontSize="small">
                           <TrashIcon />
                         </SvgIcon>
@@ -220,7 +215,7 @@ PropertyConditionsTable.propTypes = {
   onDeletePropertyType: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };
 
 export default PropertyConditionsTable;

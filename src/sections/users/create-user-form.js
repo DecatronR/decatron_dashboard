@@ -1,135 +1,114 @@
-import Head from 'next/head';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Box, Button, Stack, TextField, Typography, Select, MenuItem } from '@mui/material';
-import axios from 'axios';
+import Head from "next/head";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Box, Button, Stack, TextField, Typography, Select, MenuItem } from "@mui/material";
+import axios from "axios";
 
 const CreateUserForm = ({ onUserCreated }) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const roleOptions = [
-    { value: 'admin', label: 'Admin' },
-    { value: 'buyer', label: 'Buyer' },
-    { value: 'seller', label: 'Seller' },
-    { value: 'agent', label: 'Agent' },
+    { value: "admin", label: "Admin" },
+    { value: "buyer", label: "Buyer" },
+    { value: "seller", label: "Seller" },
+    { value: "agent", label: "Agent" },
   ];
 
   const formik = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phoneNumber: '',
-      role: '',
-      submit: null
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      role: "",
+      submit: null,
     },
     validationSchema: Yup.object({
-      firstName: Yup
-        .string()
-        .max(255)
-        .required('First Name is required'),
-      lastName: Yup
-        .string()
-        .max(255)
-        .required('Last Name is required'),
-      email: Yup
-        .string()
-        .email('Must be a valid email')
-        .max(255)
-        .required('Email is required'),
-      role: Yup
-        .string()
-        .required('Please select a role'),
-      password: Yup
-        .string()
-        .max(255)
-        .required('Password is required')
+      firstName: Yup.string().max(255).required("First Name is required"),
+      lastName: Yup.string().max(255).required("Last Name is required"),
+      email: Yup.string().email("Must be a valid email").max(255).required("Email is required"),
+      role: Yup.string().required("Please select a role"),
+      password: Yup.string().max(255).required("Password is required"),
     }),
 
     onSubmit: async (values, helpers) => {
       const currentDate = new Date();
 
-      const dd = String(currentDate.getDate()).padStart(2, '0');
-      const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const dd = String(currentDate.getDate()).padStart(2, "0");
+      const mm = String(currentDate.getMonth() + 1).padStart(2, "0");
       const yyyy = currentDate.getFullYear();
 
       const formattedDate = `${dd}/${mm}/${yyyy}`;
 
-  console.log(formattedDate);
-    console.log(`Create user form details: `, `Name: ${values.firstName} ${values.lastName}, Email: ${values.email}, Role: ${values.role}`);
+      console.log(formattedDate);
+      console.log(
+        `Create user form details: `,
+        `Name: ${values.firstName} ${values.lastName}, Email: ${values.email}, Role: ${values.role}`
+      );
 
-    const userData =  {
-      name: `${values.firstName} ${values.lastName}`,
-      email: values.email,
-      phone: "553-481-3641",
-      role: values.role,
-      password: values.password,
-      confirmpassword: values.confirmPassword
-    }
-    const createUserConfig = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'http://localhost:8080/auth/register',
-      headers: { },
-      data: userData,
-    }
-    try {
-      const res = await axios(createUserConfig);
-      console.log("Succesfully created new user: ", res);
-      onUserCreated();
-      if(res.statusText === "OK") {
-        helpers.setStatus({ success: true });
+      const userData = {
+        name: `${values.firstName} ${values.lastName}`,
+        email: values.email,
+        phone: "553-481-3641",
+        role: values.role,
+        password: values.password,
+        confirmpassword: values.confirmPassword,
+      };
+      const createUserConfig = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `${baseUrl}/auth/register`,
+        headers: {},
+        data: userData,
+      };
+      try {
+        const res = await axios(createUserConfig);
+        console.log("Successfully created new user: ", res);
+        onUserCreated();
+        if (res.statusText === "OK") {
+          helpers.setStatus({ success: true });
+        }
+      } catch (err) {
+        console.log("issue with creating new user: ", err);
+        helpers.setStatus({ success: false });
+        helpers.setErrors({ submit: err.message });
+        helpers.setSubmitting(false);
       }
-    } catch (err) {
-      console.log("issue with creating new user: ", err);
-      helpers.setStatus({ success: false });
-      helpers.setErrors({ submit: err.message });
-      helpers.setSubmitting(false);
-    }
-    }
+    },
   });
 
   const handleRoleChange = (event) => {
     event.preventDefault();
     const selectedRole = event.target.value;
-    formik.setFieldValue('role', selectedRole);
-  }
+    formik.setFieldValue("role", selectedRole);
+  };
 
   return (
     <>
       <Head>
-        <title>
-          Create New User
-        </title>
+        <title>Create New User</title>
       </Head>
       <Box
         sx={{
-          flex: '1 1 auto',
-          alignItems: 'center',
-          display: 'flex',
-          justifyContent: 'center'
+          flex: "1 1 auto",
+          alignItems: "center",
+          display: "flex",
+          justifyContent: "center",
         }}
       >
         <Box
           sx={{
             maxWidth: 550,
             px: 3,
-            py: '100px',
-            width: '100%'
+            py: "100px",
+            width: "100%",
           }}
         >
           <div>
-            <Stack
-              spacing={1}
-              sx={{ mb: 3 }}
-            >
-              <Typography variant="h4">
-                Create New User
-              </Typography>
+            <Stack spacing={1} sx={{ mb: 3 }}>
+              <Typography variant="h4">Create New User</Typography>
             </Stack>
-            <form
-              noValidate
-              onSubmit={formik.handleSubmit}
-            >
+            <form noValidate onSubmit={formik.handleSubmit}>
               <Stack spacing={3}>
                 <TextField
                   error={!!(formik.touched.firstName && formik.errors.firstName)}
@@ -142,7 +121,7 @@ const CreateUserForm = ({ onUserCreated }) => {
                   type="text"
                   value={formik.values.firstName}
                 />
-                 <TextField
+                <TextField
                   error={!!(formik.touched.lastName && formik.errors.lastName)}
                   fullWidth
                   helperText={formik.touched.lastName && formik.errors.lastName}
@@ -163,7 +142,7 @@ const CreateUserForm = ({ onUserCreated }) => {
                   onChange={formik.handleChange}
                   type="email"
                   value={formik.values.email}
-                /> 
+                />
                 <Select
                   error={!!(formik.touched.role && formik.errors.role)}
                   fullWidth
@@ -174,10 +153,10 @@ const CreateUserForm = ({ onUserCreated }) => {
                   onChange={handleRoleChange}
                   value={formik.values.role}
                   displayEmpty
-                  >
-                    <MenuItem disabled value="">
-                      Select Role
-                    </MenuItem>
+                >
+                  <MenuItem disabled value="">
+                    Select Role
+                  </MenuItem>
                   {roleOptions.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
@@ -194,8 +173,8 @@ const CreateUserForm = ({ onUserCreated }) => {
                   onChange={formik.handleChange}
                   type="password"
                   value={formik.values.password}
-                /> 
-                 <TextField
+                />
+                <TextField
                   error={!!(formik.touched.confirmPassword && formik.errors.confirmPassword)}
                   fullWidth
                   helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
@@ -205,24 +184,14 @@ const CreateUserForm = ({ onUserCreated }) => {
                   onChange={formik.handleChange}
                   type="password"
                   value={formik.values.confirmPassword}
-                /> 
+                />
               </Stack>
               {formik.errors.submit && (
-                <Typography
-                  color="error"
-                  sx={{ mt: 3 }}
-                  variant="body2"
-                >
+                <Typography color="error" sx={{ mt: 3 }} variant="body2">
                   {formik.errors.submit}
                 </Typography>
               )}
-              <Button
-                fullWidth
-                size="large"
-                sx={{ mt: 3 }}
-                type="submit"
-                variant="contained"
-              >
+              <Button fullWidth size="large" sx={{ mt: 3 }} type="submit" variant="contained">
                 Continue
               </Button>
             </form>

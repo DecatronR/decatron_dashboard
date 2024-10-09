@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
 import {
   Avatar,
   Box,
@@ -16,14 +16,15 @@ import {
   Typography,
   IconButton,
   SvgIcon,
-} from '@mui/material';
-import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
-import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
-import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
-import EditListingTypes from './edit-listing-types';
+} from "@mui/material";
+import { Scrollbar } from "src/components/scrollbar";
+import { getInitials } from "src/utils/get-initials";
+import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
+import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
+import EditListingTypes from "./edit-listing-types";
 
 export const ListingTypesTable = (props) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const {
     count = 0,
     items = [],
@@ -36,14 +37,14 @@ export const ListingTypesTable = (props) => {
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
   } = props;
 
   const [editingListingType, setEditingListingType] = useState(null);
   const [existingData, setExistingData] = useState(null);
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items.length > 0 && selected.length === items.length;
 
   const serialNumber = (index) => {
     return page * rowsPerPage + index + 1;
@@ -53,11 +54,15 @@ export const ListingTypesTable = (props) => {
     console.log("fetched listing type id: ", listingTypeId);
     setEditingListingType(listingTypeId);
     try {
-      const res = await axios.post('http://localhost:8080/listingType/editListingType', { id: listingTypeId }, { withCredentials: true });
-      console.log("Exisiting data: ", res.data.data.listingType);
+      const res = await axios.post(
+        `${baseUrl}/listingType/editListingType`,
+        { id: listingTypeId },
+        { withCredentials: true }
+      );
+      console.log("Existing data: ", res.data.data.listingType);
       setExistingData(res.data.data.listingType);
     } catch (error) {
-      console.error('Error fetching property type data:', error);
+      console.error("Error fetching property type data:", error);
     }
   };
 
@@ -69,26 +74,34 @@ export const ListingTypesTable = (props) => {
   const handleSave = async (updatedlistingType) => {
     console.log("Listing type id: ", editingListingType);
     try {
-      const res = await axios.post('http://localhost:8080/listingType/updateListingType', { id: editingListingType, listingType: updatedlistingType}, { withCredentials: true });
+      const res = await axios.post(
+        `${baseUrl}/listingType/updateListingType`,
+        { id: editingListingType, listingType: updatedlistingType },
+        { withCredentials: true }
+      );
       console.log("Updated property type: ", res.data);
       setEditingListingType(null);
       setExistingData(null);
       onRefresh();
     } catch (error) {
-      console.error('Error updating role:', error);
+      console.error("Error updating role:", error);
     }
   };
 
   const handleDeleteClick = async (listingTypeId) => {
     try {
-      const res = await axios.post('http://localhost:8080/listingType/deletelistingType', { id: listingTypeId }, { withCredentials: true });
-      console.log('Delete listingType:', res);
+      const res = await axios.post(
+        `${baseUrl}/listingType/deletelistingType`,
+        { id: listingTypeId },
+        { withCredentials: true }
+      );
+      console.log("Delete listingType:", res);
       onRefresh();
     } catch (err) {
-      console.error('Error deleting listingType:', err);
+      console.error("Error deleting listingType:", err);
     }
   };
-  
+
   return (
     <Card>
       <Scrollbar>
@@ -109,18 +122,10 @@ export const ListingTypesTable = (props) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>
-                  #
-                </TableCell>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Edit
-                </TableCell>
-                <TableCell>
-                  Delete
-                </TableCell>
+                <TableCell>#</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Edit</TableCell>
+                <TableCell>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -129,11 +134,7 @@ export const ListingTypesTable = (props) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
-                  <TableRow
-                    hover
-                    key={listingType.id}
-                    selected={isItemSelected}
-                  >
+                  <TableRow hover key={listingType.id} selected={isItemSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isItemSelected}
@@ -144,28 +145,20 @@ export const ListingTypesTable = (props) => {
                             onDeselectOne?.(listingType.id);
                           }
                         }}
-                        inputProps={{ 'aria-labelledby': labelId }}
+                        inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
+                    <TableCell>{serialNumber(index)}</TableCell>
                     <TableCell>
-                      {serialNumber(index)}
-                    </TableCell>
-                    <TableCell>
-                      <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={2}
-                      >
+                      <Stack alignItems="center" direction="row" spacing={2}>
                         <Avatar src={listingType.avatar}>
                           {getInitials(listingType.listingType)}
                         </Avatar>
-                        <Typography variant="subtitle2">
-                          {listingType.listingType}
-                        </Typography>
+                        <Typography variant="subtitle2">{listingType.listingType}</Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                    <IconButton onClick={() => handleEditClick(listingType._id)}>
+                      <IconButton onClick={() => handleEditClick(listingType._id)}>
                         <SvgIcon fontSize="small">
                           <PencilIcon />
                         </SvgIcon>
@@ -179,7 +172,7 @@ export const ListingTypesTable = (props) => {
                       )}
                     </TableCell>
                     <TableCell>
-                    <IconButton onClick={() => handleDeleteClick(listingType._id)}>
+                      <IconButton onClick={() => handleDeleteClick(listingType._id)}>
                         <SvgIcon fontSize="small">
                           <TrashIcon />
                         </SvgIcon>
@@ -218,7 +211,7 @@ ListingTypesTable.propTypes = {
   onDeleteListingType: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };
 
 export default ListingTypesTable;

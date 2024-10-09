@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
 import {
   Avatar,
   Box,
@@ -16,14 +16,15 @@ import {
   Typography,
   IconButton,
   SvgIcon,
-} from '@mui/material';
-import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
-import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
-import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
-import EditPropertyTypes from './edit-property-types';
+} from "@mui/material";
+import { Scrollbar } from "src/components/scrollbar";
+import { getInitials } from "src/utils/get-initials";
+import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
+import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
+import EditPropertyTypes from "./edit-property-types";
 
 export const PropertyTypesTable = (props) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const {
     count = 0,
     items = [],
@@ -36,14 +37,14 @@ export const PropertyTypesTable = (props) => {
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
   } = props;
 
   const [editingPropertyType, setEditingPropertyType] = useState(null);
   const [existingData, setExistingData] = useState(null);
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items.length > 0 && selected.length === items.length;
 
   const serialNumber = (index) => {
     return page * rowsPerPage + index + 1;
@@ -53,11 +54,15 @@ export const PropertyTypesTable = (props) => {
     console.log("fetched property type id: ", propertyTypeId);
     setEditingPropertyType(propertyTypeId);
     try {
-      const res = await axios.post('http://localhost:8080/propertyType/editPropertyType', { id: propertyTypeId }, { withCredentials: true });
-      console.log("Exisiting data: ", res.data.data.propertyType);
+      const res = await axios.post(
+        `${baseUrl}/propertyType/editPropertyType`,
+        { id: propertyTypeId },
+        { withCredentials: true }
+      );
+      console.log("Existing data: ", res.data.data.propertyType);
       setExistingData(res.data.data.propertyType);
     } catch (error) {
-      console.error('Error fetching property type data:', error);
+      console.error("Error fetching property type data:", error);
     }
   };
 
@@ -69,26 +74,34 @@ export const PropertyTypesTable = (props) => {
   const handleSave = async (updatedPropertyType) => {
     console.log("Role id: ", editingPropertyType);
     try {
-      const res = await axios.post('http://localhost:8080/propertyType/updatePropertyType', { id: editingPropertyType, propertyType: updatedPropertyType}, { withCredentials: true });
+      const res = await axios.post(
+        `${baseUrl}/propertyType/updatePropertyType`,
+        { id: editingPropertyType, propertyType: updatedPropertyType },
+        { withCredentials: true }
+      );
       console.log("Updated property type: ", res.data);
       setEditingPropertyType(null);
       setExistingData(null);
       onRefresh();
     } catch (error) {
-      console.error('Error updating role:', error);
+      console.error("Error updating role:", error);
     }
   };
 
   const handleDeleteClick = async (propertyTypeId) => {
     try {
-      const res = await axios.post('http://localhost:8080/propertyType/deletePropertyType', { id: propertyTypeId }, { withCredentials: true });
-      console.log('Delete propertyType:', res);
+      const res = await axios.post(
+        `${baseUrl}/propertyType/deletePropertyType`,
+        { id: propertyTypeId },
+        { withCredentials: true }
+      );
+      console.log("Delete propertyType:", res);
       onRefresh();
     } catch (err) {
-      console.error('Error deleting propertyType:', err);
+      console.error("Error deleting propertyType:", err);
     }
   };
-  
+
   return (
     <Card>
       <Scrollbar>
@@ -109,18 +122,10 @@ export const PropertyTypesTable = (props) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>
-                  #
-                </TableCell>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Edit
-                </TableCell>
-                <TableCell>
-                  Delete
-                </TableCell>
+                <TableCell>#</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Edit</TableCell>
+                <TableCell>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -129,11 +134,7 @@ export const PropertyTypesTable = (props) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
-                  <TableRow
-                    hover
-                    key={propertyType.id}
-                    selected={isItemSelected}
-                  >
+                  <TableRow hover key={propertyType.id} selected={isItemSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isItemSelected}
@@ -144,24 +145,16 @@ export const PropertyTypesTable = (props) => {
                             onDeselectOne?.(propertyType.id);
                           }
                         }}
-                        inputProps={{ 'aria-labelledby': labelId }}
+                        inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
+                    <TableCell>{serialNumber(index)}</TableCell>
                     <TableCell>
-                      {serialNumber(index)}
-                    </TableCell>
-                    <TableCell>
-                      <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={2}
-                      >
+                      <Stack alignItems="center" direction="row" spacing={2}>
                         <Avatar src={propertyType.avatar}>
                           {getInitials(propertyType.propertyType)}
                         </Avatar>
-                        <Typography variant="subtitle2">
-                          {propertyType.propertyType}
-                        </Typography>
+                        <Typography variant="subtitle2">{propertyType.propertyType}</Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
@@ -180,8 +173,8 @@ export const PropertyTypesTable = (props) => {
                       )}
                     </TableCell>
                     <TableCell>
-                     {/* the user id is initialized with an underscore exactly this way at the backend */}
-                     <IconButton onClick={() => handleDeleteClick(propertyType._id)}>
+                      {/* the user id is initialized with an underscore exactly this way at the backend */}
+                      <IconButton onClick={() => handleDeleteClick(propertyType._id)}>
                         <SvgIcon fontSize="small">
                           <TrashIcon />
                         </SvgIcon>
@@ -220,7 +213,7 @@ PropertyTypesTable.propTypes = {
   onDeletePropertyType: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };
 
 export default PropertyTypesTable;

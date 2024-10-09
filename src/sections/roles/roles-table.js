@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
 import {
   Avatar,
   Box,
@@ -16,14 +16,15 @@ import {
   Typography,
   IconButton,
   SvgIcon,
-} from '@mui/material';
-import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
-import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
-import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
-import EditRoles from './edit-roles';
+} from "@mui/material";
+import { Scrollbar } from "src/components/scrollbar";
+import { getInitials } from "src/utils/get-initials";
+import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
+import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
+import EditRoles from "./edit-roles";
 
 export const RolesTable = (props) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const {
     count = 0,
     items = [],
@@ -53,11 +54,15 @@ export const RolesTable = (props) => {
     console.log("fetched role id: ", roleId);
     setEditingRole(roleId);
     try {
-      const res = await axios.post('http://localhost:8080/role/editRole', { roleId: roleId }, { withCredentials: true });
-      console.log("Exisiting data: ", res.data.data.roleName);
+      const res = await axios.post(
+        `${baseUrl}/role/editRole`,
+        { roleId: roleId },
+        { withCredentials: true }
+      );
+      console.log("Existing data: ", res.data.data.roleName);
       setExistingData(res.data.data.roleName);
     } catch (error) {
-      console.error('Error fetching role data:', error);
+      console.error("Error fetching role data:", error);
     }
   };
 
@@ -69,23 +74,31 @@ export const RolesTable = (props) => {
   const handleSave = async (updatedRole) => {
     console.log("Role id: ", editingRole);
     try {
-      const res = await axios.post('http://localhost:8080/role/updateRole', { roleId: editingRole, roleName: updatedRole}, { withCredentials: true });
+      const res = await axios.post(
+        `${baseUrl}/role/updateRole`,
+        { roleId: editingRole, roleName: updatedRole },
+        { withCredentials: true }
+      );
       console.log("Updated role: ", res.data);
       setEditingRole(null);
       setExistingData(null);
       onRefresh();
     } catch (error) {
-      console.error('Error updating role:', error);
+      console.error("Error updating role:", error);
     }
   };
 
   const handleDeleteClick = async (roleId) => {
     try {
-      const res = await axios.post('http://localhost:8080/role/deleteRole', { roleId: roleId }, { withCredentials: true });
-      console.log('Delete role:', res);
+      const res = await axios.post(
+        `${baseUrl}/role/deleteRole`,
+        { roleId: roleId },
+        { withCredentials: true }
+      );
+      console.log("Delete role:", res);
       onRefresh();
     } catch (err) {
-      console.error('Error deleting role:', err);
+      console.error("Error deleting role:", err);
     }
   };
 
@@ -132,7 +145,7 @@ export const RolesTable = (props) => {
                             onDeselectOne?.(role.id);
                           }
                         }}
-                        inputProps={{ 'aria-labelledby': labelId }}
+                        inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
                     <TableCell>{serialNumber(index)}</TableCell>

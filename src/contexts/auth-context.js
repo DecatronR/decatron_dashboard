@@ -47,6 +47,8 @@ const handlers = {
   }),
 };
 
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const reducer = (state, action) =>
   handlers[action.type] ? handlers[action.type](state, action) : state;
 
@@ -63,7 +65,7 @@ export const AuthProvider = (props) => {
         try {
           // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as paramter
           const response = await axios.post(
-            "http://localhost:8080/users/editUsers",
+            `${baseUrl}/users/editUsers`,
             { id: userId },
             { withCredentials: true }
           );
@@ -91,7 +93,7 @@ export const AuthProvider = (props) => {
   const signIn = async (email, password) => {
     try {
       const res = await axios.post(
-        "http://localhost:8080/auth/login",
+        `${baseUrl}/auth/login`,
         { email, password },
         { withCredentials: true }
       );
@@ -106,7 +108,7 @@ export const AuthProvider = (props) => {
       sessionStorage.setItem("userId", userId); // Store userId in local storage
 
       const response = await axios.post(
-        "http://localhost:8080/users/editUsers",
+        `${baseUrl}/users/editUsers`,
         { id: userId },
         { withCredentials: true }
       );
@@ -126,7 +128,7 @@ export const AuthProvider = (props) => {
   const signUp = async (name, email, phone, role, password, confirmpassword) => {
     try {
       const res = await axios.post(
-        "http://localhost:8080/auth/register",
+        `${baseUrl}/auth/register`,
         {
           name,
           email,
@@ -146,7 +148,7 @@ export const AuthProvider = (props) => {
   const otpAuth = async (email, otp) => {
     try {
       const res = await axios.post(
-        "http://localhost:8080/auth/confirmOTP",
+        `${baseUrl}/auth/confirmOTP`,
         { email: email, otp: otp },
         { withCredentials: true }
       );
@@ -159,7 +161,7 @@ export const AuthProvider = (props) => {
 
   const signOut = async () => {
     try {
-      await axios.get("http://localhost:8080/auth/logout", {}, { withCredentials: true });
+      await axios.get(`${baseUrl}/auth/logout`, {}, { withCredentials: true });
       sessionStorage.removeItem("userId"); // we remove userId from local storage
 
       dispatch({

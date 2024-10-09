@@ -8,13 +8,14 @@ import { useAuthContext } from "src/contexts/auth-context";
 import axios from "axios";
 
 const Page = () => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const { signIn } = useAuthContext();
   const [method, setMethod] = useState("email");
 
   const handleOtpResend = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/auth/resendOTP", {
+      const res = await axios.get(`${baseUrl}/auth/resendOTP`, {
         withCredentials: true,
       });
       console.log("OTP resent", res.data);
