@@ -60,7 +60,6 @@ export const AuthProvider = (props) => {
 
   useEffect(() => {
     const initialize = async () => {
-      const token = sessionStorage.getItem("token");
       const userId = sessionStorage.getItem("userId"); // Retrieve userId from session storage
       if (userId) {
         try {
@@ -68,12 +67,7 @@ export const AuthProvider = (props) => {
           const response = await axios.post(
             `${baseUrl}/users/editUsers`,
             { id: userId },
-            {
-              withCredentials: true,
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
+            { withCredentials: true }
           );
           const user = response.data;
           dispatch({

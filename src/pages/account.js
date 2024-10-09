@@ -28,6 +28,7 @@ const Page = () => {
             { id: userId },
             { withCredentials: true }
           );
+
           const user = response.data.data;
           setUser(user);
         } catch (error) {
