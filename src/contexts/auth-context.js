@@ -106,15 +106,20 @@ export const AuthProvider = (props) => {
         console.log("Could not get token");
         throw new Error("Could not get token");
       }
-      // document.cookie = `auth_jwt=${token}; path=/`; // store token in cookie
       const userId = user;
       if (!userId) {
         console.log("Could not get userId");
         throw new Error("Could not get userId");
       }
-      sessionStorage.setItem("userId", userId); // Store userId in session storage
+      sessionStorage.setItem("userId", userId);
       sessionStorage.setItem("token", token);
 
+      // Verify token existence before making editUsers request
+      if (!sessionStorage.getItem("token")) {
+        throw new Error("Token not found");
+      }
+
+      // Await the editUsers response
       const response = await axios.post(
         `${baseUrl}/users/editUsers`,
         { id: userId },
@@ -129,7 +134,7 @@ export const AuthProvider = (props) => {
       });
     } catch (err) {
       console.error("Error during sign-in:", err);
-      throw err; // Rethrow the error to be caught in the calling component
+      throw err;
     }
   };
 
