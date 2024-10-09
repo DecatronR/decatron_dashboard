@@ -60,7 +60,7 @@ export const AuthProvider = (props) => {
 
   useEffect(() => {
     const initialize = async () => {
-      const userId = sessionStorage.getItem("userId"); // Retrieve userId from local storage
+      const userId = sessionStorage.getItem("userId"); // Retrieve userId from session storage
       if (userId) {
         try {
           // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as paramter
@@ -92,7 +92,7 @@ export const AuthProvider = (props) => {
 
   const signIn = async (email, password) => {
     try {
-      const res = await axios.post(
+      const { res, token } = await axios.post(
         `${baseUrl}/auth/login`,
         { email, password },
         { withCredentials: true }
@@ -104,8 +104,8 @@ export const AuthProvider = (props) => {
         console.log("Could not get userId");
         throw new Error("Could not get userId");
       }
-
-      sessionStorage.setItem("userId", userId); // Store userId in local storage
+      document.cookie = `auth_jwt=${token}; path=/`;
+      sessionStorage.setItem("userId", userId); // Store userId in session storage
 
       const response = await axios.post(
         `${baseUrl}/users/editUsers`,
