@@ -60,14 +60,20 @@ export const AuthProvider = (props) => {
 
   useEffect(() => {
     const initialize = async () => {
+      const token = sessionStorage.getItem("token");
       const userId = sessionStorage.getItem("userId"); // Retrieve userId from session storage
       if (userId) {
         try {
-          // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as paramter
+          // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as parameter
           const response = await axios.post(
             `${baseUrl}/users/editUsers`,
             { id: userId },
-            { withCredentials: true }
+            {
+              withCredentials: true,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
           const user = response.data;
           dispatch({
@@ -113,6 +119,7 @@ export const AuthProvider = (props) => {
         throw new Error("Could not get userId");
       }
       sessionStorage.setItem("userId", userId); // Store userId in session storage
+      sessionStorage.setItem("token", token);
 
       const response = await axios.post(
         `${baseUrl}/users/editUsers`,
@@ -169,7 +176,8 @@ export const AuthProvider = (props) => {
   const signOut = async () => {
     try {
       await axios.get(`${baseUrl}/auth/logout`, {}, { withCredentials: true });
-      sessionStorage.removeItem("userId"); // we remove userId from local storage
+      sessionStorage.removeItem("token"); // Remove token from session storage
+      sessionStorage.removeItem("userId"); // Remove userId from session storage
 
       dispatch({
         type: HANDLERS.SIGN_OUT,
