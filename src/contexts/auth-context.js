@@ -92,19 +92,25 @@ export const AuthProvider = (props) => {
 
   const signIn = async (email, password) => {
     try {
-      const { res, token } = await axios.post(
+      const { userRes, tokenRes } = await axios.post(
         `${baseUrl}/auth/login`,
         { email, password },
         { withCredentials: true }
       );
       console.log("signin res: ", res);
-      const userId = res.data.user;
+      const userId = userRes.data.user;
+      const token = tokenRes.data.token;
+
+      if (!token) {
+        console.log("Could not get token");
+        throw new Error("Could not get token");
+      }
+      document.cookie = `auth_jwt=${token}; path=/`; // store token in cookie
 
       if (!userId) {
         console.log("Could not get userId");
         throw new Error("Could not get userId");
       }
-      document.cookie = `auth_jwt=${token}; path=/`;
       sessionStorage.setItem("userId", userId); // Store userId in session storage
 
       const response = await axios.post(
@@ -120,7 +126,7 @@ export const AuthProvider = (props) => {
         payload: user,
       });
     } catch (err) {
-      console.error("Error during sign-in:", error);
+      console.error("Error during sign-in:", err);
       throw err; // Rethrow the error to be caught in the calling component
     }
   };
