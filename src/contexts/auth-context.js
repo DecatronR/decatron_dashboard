@@ -97,7 +97,6 @@ export const AuthProvider = (props) => {
         { email, password },
         { withCredentials: true }
       );
-      console.log("signin res: ", res);
       const userId = userRes.data.user;
       const token = tokenRes.data.token;
 
