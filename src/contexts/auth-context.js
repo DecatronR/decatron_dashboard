@@ -106,7 +106,7 @@ export const AuthProvider = (props) => {
         console.log("Could not get token");
         throw new Error("Could not get token");
       }
-      document.cookie = `auth_jwt=${token}; path=/`; // store token in cookie
+      // document.cookie = `auth_jwt=${token}; path=/`; // store token in cookie
       const userId = user;
       if (!userId) {
         console.log("Could not get userId");
