@@ -60,7 +60,8 @@ export const AuthProvider = (props) => {
 
   useEffect(() => {
     const initialize = async () => {
-      const userId = sessionStorage.getItem("userId"); // Retrieve userId from session storage
+      const userId = sessionStorage.getItem("userId");
+      const token = sessionStorage.getItem("token");
       if (userId) {
         try {
           // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as parameter
@@ -69,6 +70,7 @@ export const AuthProvider = (props) => {
             { id: userId },
             { withCredentials: true }
           );
+
           const user = response.data;
           dispatch({
             type: HANDLERS.INITIALIZE,
