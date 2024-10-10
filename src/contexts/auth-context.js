@@ -60,14 +60,20 @@ export const AuthProvider = (props) => {
 
   useEffect(() => {
     const initialize = async () => {
-      const userId = sessionStorage.getItem("userId"); // Retrieve userId from session storage
+      const userId = sessionStorage.getItem("userId");
+      const token = sessionStorage.getItem("token");
       if (userId) {
         try {
           // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as parameter
           const response = await axios.post(
             `${baseUrl}/users/editUsers`,
             { id: userId },
-            { withCredentials: true }
+            {
+              withCredentials: true,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
           const user = response.data;
           dispatch({
@@ -123,7 +129,12 @@ export const AuthProvider = (props) => {
       const response = await axios.post(
         `${baseUrl}/users/editUsers`,
         { id: userId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("User: ", response.data.data);
       const userData = response.data.data;
@@ -140,6 +151,7 @@ export const AuthProvider = (props) => {
 
   const signUp = async (name, email, phone, role, password, confirmpassword) => {
     try {
+      const token = sessionStorage.getItem("token");
       const res = await axios.post(
         `${baseUrl}/auth/register`,
         {
@@ -150,7 +162,12 @@ export const AuthProvider = (props) => {
           password,
           confirmpassword,
         },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
     } catch (err) {
       console.error("Error during sign-up:", err);

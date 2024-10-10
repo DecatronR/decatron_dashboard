@@ -53,8 +53,12 @@ const Page = () => {
 
   const fetchUsers = async () => {
     try {
+      const token = sessionStorage.getItem("token");
       const response = await axios.get(`${baseUrl}/users/getusers`, {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       console.log("User data: ", response.data);
       setUsersData(response.data);
