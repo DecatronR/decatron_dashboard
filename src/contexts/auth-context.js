@@ -68,7 +68,12 @@ export const AuthProvider = (props) => {
           const response = await axios.post(
             `${baseUrl}/users/editUsers`,
             { id: userId },
-            { withCredentials: true }
+            {
+              withCredentials: true,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
 
           const user = response.data;
@@ -125,7 +130,12 @@ export const AuthProvider = (props) => {
       const response = await axios.post(
         `${baseUrl}/users/editUsers`,
         { id: userId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("User: ", response.data.data);
       const userData = response.data.data;
@@ -142,6 +152,7 @@ export const AuthProvider = (props) => {
 
   const signUp = async (name, email, phone, role, password, confirmpassword) => {
     try {
+      const token = sessionStorage.getItem("token");
       const res = await axios.post(
         `${baseUrl}/auth/register`,
         {
@@ -152,7 +163,12 @@ export const AuthProvider = (props) => {
           password,
           confirmpassword,
         },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
     } catch (err) {
       console.error("Error during sign-up:", err);
