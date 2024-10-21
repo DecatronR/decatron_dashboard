@@ -83,7 +83,7 @@ export const AuthProvider = (props) => {
           });
         } catch (error) {
           console.error(error);
-          dispatch({
+          dispatch({ 
             type: HANDLERS.INITIALIZE,
           });
         }
