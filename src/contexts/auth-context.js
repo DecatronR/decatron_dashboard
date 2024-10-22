@@ -83,7 +83,7 @@ export const AuthProvider = (props) => {
           });
         } catch (error) {
           console.error(error);
-          dispatch({ 
+          dispatch({
             type: HANDLERS.INITIALIZE,
           });
         }
@@ -163,12 +163,7 @@ export const AuthProvider = (props) => {
           password,
           confirmpassword,
         },
-        {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { withCredentials: true }
       );
     } catch (err) {
       console.error("Error during sign-up:", err);
