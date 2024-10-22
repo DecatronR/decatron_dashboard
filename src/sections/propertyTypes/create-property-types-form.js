@@ -16,11 +16,18 @@ const CreatePropertyTypesForm = ({ onPropertyTypeCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in session storage");
+        return;
+      }
       const createPropertyTypeConfig = {
         method: "post",
         maxBodyLength: Infinity,
         url: `${baseUrl}/propertyType/createPropertyType`,
-        headers: {},
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         data: {
           propertyType: values.propertyType,
         },

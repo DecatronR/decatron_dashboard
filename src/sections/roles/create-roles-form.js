@@ -16,11 +16,18 @@ const CreateRoleForm = ({ onRoleCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in session storage");
+        return;
+      }
       const createRoleConfig = {
         method: "post",
         maxBodyLength: Infinity,
         url: `${baseUrl}/role/createRole`,
-        headers: {},
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         data: {
           roleName: values.role,
         },
@@ -29,7 +36,7 @@ const CreateRoleForm = ({ onRoleCreated }) => {
 
       try {
         const res = await axios(createRoleConfig);
-        console.log("Succesfully created new role: ", res);
+        console.log("Successfully created new role: ", res);
         onRoleCreated();
       } catch (error) {
         console.log("Issue with creating role: ", error);

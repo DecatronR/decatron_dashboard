@@ -16,11 +16,18 @@ const CreatePropertyUsageTypesForm = ({ onPropertyUsageTypeCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in session storage");
+        return;
+      }
       const createPropertyUsageTypeConfig = {
         method: "post",
         maxBodyLength: Infinity,
         url: `${baseUrl}/propertyUsage/createPropertyUsage`,
-        headers: {},
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         data: {
           propertyUsage: values.propertyUsageType,
         },

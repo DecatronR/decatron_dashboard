@@ -112,8 +112,14 @@ const CreateListing = () => {
   };
 
   const fetchData = useCallback(async (url, setter) => {
+    const token = sessionStorage.getItem("token");
     try {
-      const res = await axios.get(url, { withCredentials: true });
+      const res = await axios.get(url, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log(`Successfully fetched data from ${url}: `, res);
       const data = res.data;
       console.log("Data: ", data);
@@ -183,11 +189,15 @@ const CreateListing = () => {
         photo: values.photos.map((photo) => ({ path: photo.path })),
       };
 
+      const token = sessionStorage.getItem("token");
+
       const propertyListingConfig = {
         method: "post",
         maxBodyLength: Infinity,
         url: `${baseUrl}/propertyListing/createPropertyListing`,
-        headers: {},
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         data: propertyListingData,
         withCredentials: true,
       };
@@ -195,7 +205,7 @@ const CreateListing = () => {
       try {
         console.log("property listing data: ", propertyListingData);
         const res = await axios(propertyListingConfig);
-        console.log("Succesfully listed new property: ", res);
+        console.log("Successfully listed new property: ", res);
         onUserCreated();
         if (res.statusText === "OK") {
           helpers.setStatus({ success: true });

@@ -53,11 +53,21 @@ export const PropertyConditionsTable = (props) => {
   const handleEditClick = async (propertyConditionId) => {
     console.log("fetched property condition id: ", propertyConditionId);
     setEditingPropertyCondition(propertyConditionId);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/propertyCondition/editPropertyCondition`,
         { id: propertyConditionId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Existing data: ", res.data.data.propertyCondition);
       setExistingData(res.data.data.propertyCondition);
@@ -73,11 +83,21 @@ export const PropertyConditionsTable = (props) => {
 
   const handleSave = async (updatedPropertyCondition) => {
     console.log("Condition id: ", editingPropertyCondition);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/propertyCondition/updatePropertyCondition`,
         { id: editingPropertyCondition, propertyCondition: updatedPropertyCondition },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Updated property type: ", res.data);
       setEditingPropertyCondition(null);
@@ -89,11 +109,21 @@ export const PropertyConditionsTable = (props) => {
   };
 
   const handleDeleteClick = async (propertyConditionId) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/propertyCondition/deletePropertyCondition`,
         { id: propertyConditionId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Delete propertyCondition:", res);
       onRefresh();

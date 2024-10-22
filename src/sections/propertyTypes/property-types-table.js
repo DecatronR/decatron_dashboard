@@ -53,11 +53,21 @@ export const PropertyTypesTable = (props) => {
   const handleEditClick = async (propertyTypeId) => {
     console.log("fetched property type id: ", propertyTypeId);
     setEditingPropertyType(propertyTypeId);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/propertyType/editPropertyType`,
         { id: propertyTypeId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Existing data: ", res.data.data.propertyType);
       setExistingData(res.data.data.propertyType);
@@ -73,11 +83,21 @@ export const PropertyTypesTable = (props) => {
 
   const handleSave = async (updatedPropertyType) => {
     console.log("Role id: ", editingPropertyType);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/propertyType/updatePropertyType`,
         { id: editingPropertyType, propertyType: updatedPropertyType },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Updated property type: ", res.data);
       setEditingPropertyType(null);
@@ -89,11 +109,21 @@ export const PropertyTypesTable = (props) => {
   };
 
   const handleDeleteClick = async (propertyTypeId) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/propertyType/deletePropertyType`,
         { id: propertyTypeId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Delete propertyType:", res);
       onRefresh();

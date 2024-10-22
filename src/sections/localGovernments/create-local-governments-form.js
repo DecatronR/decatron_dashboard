@@ -27,11 +27,20 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
         stateId: values.stateId,
         lga: values.localGovernment,
       };
+
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in session storage");
+        return;
+      }
+
       const createLocalGovernmentConfig = {
         method: "post",
         maxBodyLength: Infinity,
         url: `${baseUrl}/lga/createLGA`,
-        headers: {},
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         data: localGovernmentData,
         withCredentials: true,
       };
@@ -51,11 +60,18 @@ const CreateLocalGovernmentsForm = ({ onLocalGovernmentCreated }) => {
   });
 
   const handleFetchStates = async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     const fetchStatesConfig = {
       method: "get",
       maxBodyLength: Infinity,
       url: `${baseUrl}/state/fetchState`,
-      headers: {},
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       withCredentials: true,
     };
 

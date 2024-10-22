@@ -49,9 +49,17 @@ const Page = () => {
   };
 
   const fetchRoles = async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const response = await axios.get(`${baseUrl}/role/getRoles`, {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       console.log("User data: ", response.data);
       setRolesData(response.data);

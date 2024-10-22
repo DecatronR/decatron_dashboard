@@ -52,8 +52,13 @@ const Page = () => {
   };
 
   const fetchUsers = async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
+
     try {
-      const token = sessionStorage.getItem("token");
       const response = await axios.get(`${baseUrl}/users/getusers`, {
         withCredentials: true,
         headers: {
@@ -82,12 +87,22 @@ const Page = () => {
   };
 
   const handleDeleteUser = async (userId) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       console.log("User Id ready: ", userId);
       const res = await axios.post(
         `${baseUrl}/users/delete`,
         { id: userId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Delete users: ", res);
       fetchUsers();

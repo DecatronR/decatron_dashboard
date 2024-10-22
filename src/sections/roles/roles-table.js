@@ -53,11 +53,21 @@ export const RolesTable = (props) => {
   const handleEditClick = async (roleId) => {
     console.log("fetched role id: ", roleId);
     setEditingRole(roleId);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/role/editRole`,
         { roleId: roleId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Existing data: ", res.data.data.roleName);
       setExistingData(res.data.data.roleName);
@@ -73,11 +83,21 @@ export const RolesTable = (props) => {
 
   const handleSave = async (updatedRole) => {
     console.log("Role id: ", editingRole);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/role/updateRole`,
         { roleId: editingRole, roleName: updatedRole },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Updated role: ", res.data);
       setEditingRole(null);
@@ -89,11 +109,21 @@ export const RolesTable = (props) => {
   };
 
   const handleDeleteClick = async (roleId) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/role/deleteRole`,
         { roleId: roleId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Delete role:", res);
       onRefresh();

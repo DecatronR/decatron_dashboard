@@ -54,9 +54,17 @@ export const AccountProfileDetails = (props) => {
 
   useEffect(() => {
     const fetchRoles = async () => {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in session storage");
+        return;
+      }
       try {
         const response = await axios.get(`${baseUrl}/role/getRoles`, {
           withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         console.log("roles: ", response.data);
         setRolesData(response.data);
@@ -70,6 +78,11 @@ export const AccountProfileDetails = (props) => {
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in session storage");
+        return;
+      }
       const updatedUser = {
         ...values,
         name: `${values.firstName} ${values.lastName}`,
@@ -80,6 +93,9 @@ export const AccountProfileDetails = (props) => {
         console.log("Updating user:", updatedUser);
         await axios.post(`${baseUrl}/users/update`, updatedUser, {
           withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
       } catch (err) {
         console.error("Error updating user:", err);

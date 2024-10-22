@@ -54,11 +54,21 @@ export const StatesTable = (props) => {
   const handleEditClick = async (stateId) => {
     console.log("fetched state id: ", stateId);
     setEditingState(stateId);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/state/editState`,
         { id: stateId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Existing data: ", res.data.data.state);
       setExistingData(res.data.data.state);
@@ -69,16 +79,26 @@ export const StatesTable = (props) => {
 
   const handleCancel = () => {
     setEditingState(null);
-    setExistingState(null);
+    setExistingData(null);
   };
 
   const handleSave = async (updatedState) => {
     console.log("State id: ", editingState);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/state/updateState`,
         { id: editingState, state: updatedState },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Updated state:  ", res.data);
       setEditingState(null);
@@ -90,11 +110,21 @@ export const StatesTable = (props) => {
   };
 
   const handleDeleteClick = async (stateId) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/state/deleteState`,
         { id: stateId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Delete state:", res);
       onRefresh();

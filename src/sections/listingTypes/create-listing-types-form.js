@@ -17,11 +17,19 @@ const CreateListingTypesForm = ({ onListingTypeCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in session storage");
+        return;
+      }
+
       const createListingTypeConfig = {
         method: "post",
         maxBodyLength: Infinity,
         url: `${baseUrl}/listingType/createListingType`,
-        headers: {},
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         data: {
           listingType: values.listingType,
         },

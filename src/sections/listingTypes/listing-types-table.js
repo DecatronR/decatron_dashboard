@@ -53,11 +53,22 @@ export const ListingTypesTable = (props) => {
   const handleEditClick = async (listingTypeId) => {
     console.log("fetched listing type id: ", listingTypeId);
     setEditingListingType(listingTypeId);
+
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/listingType/editListingType`,
         { id: listingTypeId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Existing data: ", res.data.data.listingType);
       setExistingData(res.data.data.listingType);
@@ -73,11 +84,21 @@ export const ListingTypesTable = (props) => {
 
   const handleSave = async (updatedlistingType) => {
     console.log("Listing type id: ", editingListingType);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/listingType/updateListingType`,
         { id: editingListingType, listingType: updatedlistingType },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Updated property type: ", res.data);
       setEditingListingType(null);
@@ -89,11 +110,21 @@ export const ListingTypesTable = (props) => {
   };
 
   const handleDeleteClick = async (listingTypeId) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/listingType/deletelistingType`,
         { id: listingTypeId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Delete listingType:", res);
       onRefresh();

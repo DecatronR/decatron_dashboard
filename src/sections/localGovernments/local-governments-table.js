@@ -56,11 +56,22 @@ export const LocalGovernmentsTable = (props) => {
     console.log("fetched lga id: ", lgaId);
     setEditingLocalGovernment(lgaId);
     setEditingStateId(stateId);
+
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/lga/editLGA`,
         { id: lgaId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Existing data: ", res.data.data.lga);
       setExistingData(res.data.data.lga);
@@ -76,11 +87,21 @@ export const LocalGovernmentsTable = (props) => {
 
   const handleSave = async (updatedLga) => {
     console.log("Local government id: ", editingLocalGovernment);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/lga/updateLGA`,
         { id: editingLocalGovernment, lga: updatedLga, stateId: editingState },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Updated role: ", res.data);
       setEditingLocalGovernment(null);
@@ -92,16 +113,26 @@ export const LocalGovernmentsTable = (props) => {
   };
 
   const handleDeleteClick = async (lgaId) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/lga/deleteLGA`,
         { id: lgaId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Delete local government:", res);
       onRefresh();
     } catch (err) {
-      console.error("Error deleting local goverment:", err);
+      console.error("Error deleting local government:", err);
     }
   };
 

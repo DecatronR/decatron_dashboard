@@ -18,11 +18,18 @@ const CreateStatesForm = ({ onStateCreated }) => {
 
     onSubmit: async (values, helpers) => {
       console.log("Create state button clicked");
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in session storage");
+        return;
+      }
       const createStateConfig = {
         method: "post",
         maxBodyLength: Infinity,
         url: `${baseUrl}/state/createState`,
-        headers: {},
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         data: {
           state: values.state,
         },

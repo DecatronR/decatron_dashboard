@@ -26,7 +26,12 @@ const Page = () => {
           const response = await axios.post(
             `${baseUrl}/users/editUsers`,
             { id: userId },
-            { withCredentials: true }
+            {
+              withCredentials: true,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
 
           const user = response.data.data;

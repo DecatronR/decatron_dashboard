@@ -16,11 +16,18 @@ const CreatePropertyConditionsForm = ({ onPropertyConditionsCreated }) => {
     }),
 
     onSubmit: async (values, helpers) => {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in session storage");
+        return;
+      }
       const createPropertyConditionConfig = {
         method: "post",
         maxBodyLength: Infinity,
         url: `${baseUrl}/propertyCondition/createPropertyCondition`,
-        headers: {},
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         data: {
           propertyCondition: values.propertyConditions,
         },

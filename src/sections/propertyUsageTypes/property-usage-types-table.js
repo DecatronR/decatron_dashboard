@@ -53,11 +53,21 @@ export const PropertyUsageTypesTable = (props) => {
   const handleEditClick = async (propertyUsageTypeId) => {
     console.log("fetched property usage type id: ", propertyUsageTypeId);
     setEditingPropertyUsageType(propertyUsageTypeId);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/propertyUsage/editPropertyUsage`,
         { id: propertyUsageTypeId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Existing data: ", res.data.data.propertyUsage);
       setExistingData(res.data.data.propertyUsage);
@@ -73,11 +83,21 @@ export const PropertyUsageTypesTable = (props) => {
 
   const handleSave = async (updatedPropertyUsageType) => {
     console.log("Role id: ", editingPropertyUsageType);
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/propertyUsage/updatePropertyUsage`,
         { id: editingPropertyUsageType, propertyUsage: updatedPropertyUsageType },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Updated property type: ", res.data);
       setEditingPropertyUsageType(null);
@@ -89,11 +109,21 @@ export const PropertyUsageTypesTable = (props) => {
   };
 
   const handleDeleteClick = async (propertyUsageTypeId) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const res = await axios.post(
         `${baseUrl}/propertyUsage/deletePropertyUsage`,
         { id: propertyUsageTypeId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Delete property usage type:", res);
       onRefresh();

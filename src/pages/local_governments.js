@@ -49,9 +49,17 @@ const Page = () => {
   };
 
   const fetchLocalGovernments = async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const response = await axios.get(`${baseUrl}/lga/fetchLGA`, {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       console.log("LGAs data: ", response.data);
       setLocalGovernmentsData(response.data);
@@ -75,12 +83,18 @@ const Page = () => {
   };
 
   const handleDeleteLocalGovernment = async (userId) => {
+    const token = sessionStorage.getItem("token");
     try {
       console.log("Local Government Id ready: ", roleId);
       const res = await axios.post(
         `${baseUrl}/users/delete`,
         { id: userId },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Delete local government: ", res);
       fetchLocalGovernments();

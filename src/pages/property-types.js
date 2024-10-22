@@ -51,9 +51,17 @@ const Page = () => {
   };
 
   const fetchPropertyTypes = async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
       const response = await axios.get(`${baseUrl}/propertyType/fetchPropertyType`, {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       console.log("Property type data: ", response.data);
       setPropertyTypesData(response.data);

@@ -14,13 +14,23 @@ const EditUser = () => {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     if (userId) {
       const fetchUser = async () => {
         try {
           const res = await axios.post(
             `${baseUrl}/users/editUsers`,
             { id: userId },
-            { withCredentials: true }
+            {
+              withCredentials: true,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
           setUserData(res.data.data);
         } catch (error) {
@@ -37,8 +47,18 @@ const EditUser = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in session storage");
+      return;
+    }
     try {
-      await axios.post(`${baseUrl}/users/update`, userData, { withCredentials: true });
+      await axios.post(`${baseUrl}/users/update`, userData, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       router.push("/users");
     } catch (error) {
       console.error("Error updating user data: ", error);
