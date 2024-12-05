@@ -62,10 +62,6 @@ export const AuthProvider = (props) => {
     const initialize = async () => {
       const userId = sessionStorage.getItem("userId");
       const token = sessionStorage.getItem("token");
-      // if (!token) {
-      //   console.error("No token found in session storage");
-      //   return;
-      // }
       if (userId) {
         try {
           // the editUsers end point as it is used here is used to fetch the details of the individual user by taking in the userId fetched by triggering the login endpoint as parameter

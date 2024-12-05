@@ -190,7 +190,10 @@ const CreateListing = () => {
       };
 
       const token = sessionStorage.getItem("token");
-
+      if (!token) {
+        console.error("No token found in session storage");
+        return;
+      }
       const propertyListingConfig = {
         method: "post",
         maxBodyLength: Infinity,
