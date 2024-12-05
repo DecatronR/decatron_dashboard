@@ -89,7 +89,7 @@ const Page = () => {
                 difference={16}
                 positive={false}
                 sx={{ height: "100%" }}
-                value="4"
+                value="0"
               />
             </Grid>
             <Grid xs={12} sm={6} lg={3}>
