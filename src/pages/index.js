@@ -6,13 +6,9 @@ import { OverviewUsers } from "src/sections/overview/overview-users";
 import { OverviewPropertiesListed } from "src/sections/overview/overview-properties-listed";
 import { OverviewInspectionsBooked } from "src/sections/overview/overview-inspections-booked";
 import { OverviewInspectionsCompleted } from "src/sections/overview/overview-inspections-completed";
-import { OverviewLatestOrders } from "src/sections/overview/overview-latest-orders";
-import { OverviewLatestProducts } from "src/sections/overview/overview-latest-products";
-import { OverviewSales } from "src/sections/overview/overview-sales";
-import { OverviewTasksProgress } from "src/sections/overview/overview-inspections-booked";
-import { OverviewTotalCustomers } from "src/sections/overview/overview-properties-listed";
-import { OverviewTotalProfit } from "src/sections/overview/overview-inspections-completed";
+import { OverviewSales } from "src/sections/overview/overview-monthly-active-users";
 import { OverviewTraffic } from "src/sections/overview/overview-traffic";
+import { OverviewMonthlyActiveUsers } from "src/sections/overview/overview-monthly-active-users";
 
 const now = new Date();
 
@@ -53,7 +49,7 @@ const Page = () => (
             <OverviewInspectionsCompleted sx={{ height: "100%" }} value="0" />
           </Grid>
           <Grid xs={12} lg={8}>
-            <OverviewSales
+            <OverviewMonthlyActiveUsers
               chartSeries={[
                 {
                   name: "This year",

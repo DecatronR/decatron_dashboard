@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import CurrencyDollarIcon from "@heroicons/react/24/solid/CurrencyDollarIcon";
+import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon";
 import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from "@mui/material";
 
 export const OverviewInspectionsCompleted = (props) => {
@@ -23,7 +23,7 @@ export const OverviewInspectionsCompleted = (props) => {
             }}
           >
             <SvgIcon>
-              <CurrencyDollarIcon />
+              <CheckCircleIcon />
             </SvgIcon>
           </Avatar>
         </Stack>
