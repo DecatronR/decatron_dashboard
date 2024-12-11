@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { useRouter } from "next/router";
 import {
   Avatar,
   Box,
@@ -16,11 +16,11 @@ import {
   Typography,
   IconButton,
   SvgIcon,
-} from '@mui/material';
-import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
-import TrashIcon from '@heroicons/react/24/solid/TrashIcon';
-import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
+} from "@mui/material";
+import { Scrollbar } from "src/components/scrollbar";
+import { getInitials } from "src/utils/get-initials";
+import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
+import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 
 export const UsersTable = (props) => {
   const {
@@ -36,34 +36,34 @@ export const UsersTable = (props) => {
     onDeleteUser,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
   } = props;
 
   const router = useRouter();
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items.length > 0 && selected.length === items.length;
 
   const serialNumber = (index) => {
     return page * rowsPerPage + index + 1;
   };
 
   const formatDate = (timestamp) => {
-    return new Date(timestamp).toISOString().split('T')[0];
+    return new Date(timestamp).toISOString().split("T")[0];
   };
 
   const handleDeleteClick = (userId) => {
-    if(onDeleteUser) {
-      onDeleteUser(userId)
+    if (onDeleteUser) {
+      onDeleteUser(userId);
     }
-  }
+  };
 
   const handleEditClick = (userId) => {
-    if(onEditUser) {
+    if (onEditUser) {
       onEditUser(userId);
     }
-  }
-  
+  };
+
   return (
     <Card>
       <Scrollbar>
@@ -84,24 +84,13 @@ export const UsersTable = (props) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>
-                  #
-                </TableCell>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Email
-                </TableCell>
-                <TableCell>
-                  Role
-                </TableCell>
-                <TableCell>
-                  Signed Up
-                </TableCell>
-                <TableCell>
-                  Actions
-                </TableCell>
+                <TableCell>#</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Phone No</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell>Signed Up</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -110,11 +99,7 @@ export const UsersTable = (props) => {
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
-                  <TableRow
-                    hover
-                    key={user.id}
-                    selected={isItemSelected}
-                  >
+                  <TableRow hover key={user.id} selected={isItemSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isItemSelected}
@@ -125,36 +110,23 @@ export const UsersTable = (props) => {
                             onDeselectOne?.(user.id);
                           }
                         }}
-                        inputProps={{ 'aria-labelledby': labelId }}
+                        inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
+                    <TableCell>{serialNumber(index)}</TableCell>
                     <TableCell>
-                      {serialNumber(index)}
-                    </TableCell>
-                    <TableCell>
-                      <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={2}
-                      >
-                        <Avatar src={user.avatar}>
-                          {getInitials(user.name)}
-                        </Avatar>
-                        <Typography variant="subtitle2">
-                          {user.name}
-                        </Typography>
+                      <Stack alignItems="center" direction="row" spacing={2}>
+                        <Avatar src={user.avatar}>{getInitials(user.name)}</Avatar>
+                        <Typography variant="subtitle2">{user.name}</Typography>
                       </Stack>
                     </TableCell>
-                    <TableCell>
-                      {user.email}
-                    </TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.phone}</TableCell>
                     <TableCell>
                       {/* the user id is initialized with an underscore exactly this way at the backend */}
                       {user.role}
                     </TableCell>
-                    <TableCell>
-                      {formatDate(user.createdAt)}
-                    </TableCell>
+                    <TableCell>{formatDate(user.createdAt)}</TableCell>
                     <TableCell>
                       {/* the user id is initialized with an underscore exactly this way at the backend */}
                       <IconButton onClick={() => handleEditClick(user._id)}>
@@ -202,7 +174,7 @@ UsersTable.propTypes = {
   onDeleteUser: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };
 
 export default UsersTable;
