@@ -1,4 +1,4 @@
-import { useCallback, useEffect} from 'react';
+import { useCallback, useEffect } from "react";
 import {
   Box,
   Button,
@@ -10,34 +10,29 @@ import {
   TextField,
   Unstable_Grid2 as Grid,
   Select,
-  MenuItem
-} from '@mui/material';
-import { propertyUsageTypes, propertySubTypes, propertyCondtions } from 'src/components/database/create-listing';
+  MenuItem,
+} from "@mui/material";
 
 const BasicInformation = (props) => {
-  const { formik, propertyTypes, listingTypes, states, localGovernment } = props;
+  const {
+    formik,
+    propertyTypes,
+    listingTypes,
+    propertyUsageTypes,
+    propertyConditions,
+    states,
+    localGovernment,
+  } = props;
 
   return (
-    <form
-      autoComplete="off"
-      noValidate
-    >
+    <form autoComplete="off" noValidate>
       <Card>
-        <CardHeader
-          subheader="The information can be edited"
-          title="Basic Information"
-        />
+        <CardHeader subheader="The information can be edited" title="Basic Information" />
         <CardContent sx={{ pt: 0 }}>
           <Box sx={{ m: -1.5 }}>
-            <Grid
-              container
-              spacing={3}
-            >
-               <Grid
-                xs={12}
-                md={6}
-              >
-                 <TextField
+            <Grid container spacing={3}>
+              <Grid xs={12} md={6}>
+                <TextField
                   error={!!(formik.touched.propertyTitle && formik.errors.propertyTitle)}
                   fullWidth
                   helperText={formik.touched.propertyTitle && formik.errors.propertyTitle}
@@ -47,16 +42,17 @@ const BasicInformation = (props) => {
                   onChange={formik.handleChange}
                   type="text"
                   value={formik.values.propertyTitle}
-                /> 
+                />
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
+              <Grid xs={12} md={6}>
                 <Select
-                  error={!!(formik.touched.propertyListingType && formik.errors.propertyListingType)}
+                  error={
+                    !!(formik.touched.propertyListingType && formik.errors.propertyListingType)
+                  }
                   fullWidth
-                  helperText={formik.touched.propertyListingType && formik.errors.propertyListingType}
+                  helperText={
+                    formik.touched.propertyListingType && formik.errors.propertyListingType
+                  }
                   name="propertyListingType"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
@@ -73,12 +69,9 @@ const BasicInformation = (props) => {
                   ))}
                 </Select>
               </Grid>
-              
-              <Grid
-                xs={12}
-                md={6}
-              >
-               <Select
+
+              <Grid xs={12} md={6}>
+                <Select
                   error={!!(formik.touched.propertyUsageType && formik.errors.propertyUsageType)}
                   fullWidth
                   helperText={formik.touched.propertyUsageType && formik.errors.propertyUsageType}
@@ -88,21 +81,18 @@ const BasicInformation = (props) => {
                   onChange={formik.handleChange}
                   value={formik.values.propertyUsageType}
                   displayEmpty
-                  >
-                    <MenuItem disabled value="">
-                      Select Usage Type
-                    </MenuItem>
+                >
+                  <MenuItem disabled value="">
+                    Select Usage Type
+                  </MenuItem>
                   {propertyUsageTypes.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                    <MenuItem key={option._id} value={option.slug}>
+                      {option.propertyUsage}
                     </MenuItem>
                   ))}
                 </Select>
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
+              <Grid xs={12} md={6}>
                 <Select
                   error={!!(formik.touched.propertyType && formik.errors.propertyType)}
                   fullWidth
@@ -123,11 +113,8 @@ const BasicInformation = (props) => {
                   ))}
                 </Select>
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <Select
+              <Grid xs={12} md={6}>
+                {/* <Select
                   error={!!(formik.touched.propertySubType && formik.errors.propertySubType)}
                   fullWidth
                   helperText={formik.touched.propertySubType && formik.errors.propertySubType}
@@ -151,8 +138,8 @@ const BasicInformation = (props) => {
               <Grid
                 xs={12}
                 md={6}
-              >
-               <Select
+              > */}
+                <Select
                   error={!!(formik.touched.propertyCondition && formik.errors.propertyCondition)}
                   fullWidth
                   helperText={formik.touched.propertyCondition && formik.errors.propertyCondition}
@@ -162,22 +149,17 @@ const BasicInformation = (props) => {
                   onChange={formik.handleChange}
                   value={formik.values.propertyCondition}
                   displayEmpty
-                  >
-                    <MenuItem value="">
-                      Select Property Condition
-                    </MenuItem>
-                  {propertyCondtions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                >
+                  <MenuItem value="">Select Property Condition</MenuItem>
+                  {propertyConditions.map((option) => (
+                    <MenuItem key={option._id} value={option.slug}>
+                      {option.propertyCondition}
                     </MenuItem>
                   ))}
                 </Select>
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-               <Select
+              <Grid xs={12} md={6}>
+                <Select
                   error={!!(formik.touched.state && formik.errors.state)}
                   fullWidth
                   helperText={formik.touched.state && formik.errors.state}
@@ -197,15 +179,12 @@ const BasicInformation = (props) => {
                   ))}
                 </Select>
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
+              <Grid xs={12} md={6}>
                 <Select
                   error={!!(formik.touched.localGovernment && formik.errors.localGovernment)}
                   fullWidth
                   helperText={formik.touched.localGovernment && formik.errors.localGovernment}
-                  name="state"
+                  name="localGovernment"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                   value={formik.values.localGovernment}
@@ -221,11 +200,8 @@ const BasicInformation = (props) => {
                   ))}
                 </Select>
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-               <TextField
+              <Grid xs={12} md={6}>
+                <TextField
                   error={!!(formik.touched.neighbourhood && formik.errors.neighbourhood)}
                   fullWidth
                   helperText={formik.touched.neighbourhood && formik.errors.neighbourhood}
@@ -235,13 +211,10 @@ const BasicInformation = (props) => {
                   onChange={formik.handleChange}
                   type="text"
                   value={formik.values.neighbourhood}
-                /> 
+                />
               </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                 <TextField
+              <Grid xs={12} md={6}>
+                <TextField
                   error={!!(formik.touched.size && formik.errors.size)}
                   fullWidth
                   helperText={formik.touched.size && formik.errors.size}
@@ -251,7 +224,7 @@ const BasicInformation = (props) => {
                   onChange={formik.handleChange}
                   type="text"
                   value={formik.values.size}
-                /> 
+                />
               </Grid>
             </Grid>
           </Box>

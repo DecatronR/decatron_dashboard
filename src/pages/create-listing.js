@@ -25,6 +25,8 @@ const CreateListing = () => {
   const [completedSteps, setCompletedSteps] = useState(0);
   const [propertyTypes, setPropertyTypes] = useState([]);
   const [listingTypes, setListingTypes] = useState([]);
+  const [propertyUsageTypes, setPropertyUsageTypes] = useState([]);
+  const [propertyConditions, setPropertyConditions] = useState([]);
   const [states, setStates] = useState([]);
   const [localGovernment, setLocalGovernment] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -51,7 +53,7 @@ const CreateListing = () => {
     bedrooms: Yup.number(),
     kitchens: Yup.number(),
     parkingSpaces: Yup.number(),
-    price: Yup.number().required("Price is required").positive("Price must be positive"),
+    Price: Yup.string().required("Price is required"),
   });
 
   const propertyMediaValidationSchema = Yup.object().shape({
@@ -134,6 +136,8 @@ const CreateListing = () => {
       await Promise.all([
         fetchData(`${baseUrl}/propertyType/fetchPropertyType`, setPropertyTypes),
         fetchData(`${baseUrl}/listingType/fetchListingType`, setListingTypes),
+        fetchData(`${baseUrl}/propertyUsage/fetchPropertyUsage`, setPropertyUsageTypes),
+        fetchData(`${baseUrl}/propertyCondition/fetchPropertyCondition`, setPropertyConditions),
         fetchData(`${baseUrl}/state/fetchState`, setStates),
         fetchData(`${baseUrl}/lga/fetchLGA`, setLocalGovernment),
       ]);
@@ -148,18 +152,18 @@ const CreateListing = () => {
       propertyListingType: "",
       propertyUsageType: "",
       propertyType: "",
-      propertySubType: "",
+      propertySubType: "null",
       state: "",
       localGovernment: "",
       neighbourhood: "",
       size: "",
       propertyCondition: "",
       propertyDescription: "",
-      livingRooms: "",
+      livingRooms: "null",
       bedrooms: "",
       kitchens: "",
-      parkingSpaces: "",
-      price: "",
+      parkingSpaces: "null",
+      Price: "",
       photos: [],
       virtualTour: "",
       video: "",
@@ -183,7 +187,7 @@ const CreateListing = () => {
         NoOfBedRooms: values.bedrooms,
         NoOfKitchens: values.kitchens,
         NoOfParkingSpace: values.parkingSpaces,
-        Price: values.price,
+        Price: values.Price,
         virtualTour: values.virtualTour,
         video: values.video,
         photo: values.photos.map((photo) => ({ path: photo.path })),
@@ -231,6 +235,8 @@ const CreateListing = () => {
             formik={formik}
             propertyTypes={propertyTypes}
             listingTypes={listingTypes}
+            propertyUsageTypes={propertyUsageTypes}
+            propertyConditions={propertyConditions}
             states={states}
             localGovernment={localGovernment}
           />
