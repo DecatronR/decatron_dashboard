@@ -53,6 +53,6 @@ export const OverviewPropertiesListed = (props) => {
 OverviewPropertiesListed.propTypes = {
   difference: PropTypes.number,
   positive: PropTypes.bool,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   sx: PropTypes.object,
 };
